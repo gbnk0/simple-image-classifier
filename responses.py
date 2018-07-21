@@ -1,3 +1,8 @@
-resp_created = {'status': 'created'}
-resp_conflict = {'status': 'conflict'}
-resp_error = {'status': 'error'}
+def resp_created():
+    return {'status': 'created'}
+
+def resp_conflict():
+    return {'status': 'conflict'}
+    
+def resp_error():
+    return {'status': 'error'}

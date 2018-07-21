@@ -1,6 +1,17 @@
 import os
 import re
 import uuid
+import requests
+
+def save_from_url(url, dest_file):
+    result = False
+
+    with open(dest_file, "wb") as file:
+        response = requests.get(url)
+        file.write(response.content)
+        result = True
+
+    return result
 
 def make_dir(directory):
     result = False

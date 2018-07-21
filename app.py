@@ -12,31 +12,38 @@ datasets_dir = data_dir + 'datasets/'
 
 datasets = Datasets(datasets_dir)
 
-@app.get('/datasets')
+@app.route('/datasets', methods=['GET'])
 async def route_get_datases(request):
     return json(datasets.get(), status=200)
 
-@app.put('/datasets')
+
+@app.route('/datasets', methods=['PUT'])
 async def route_new_dataset(request):
-    result = resp_error
+    result = resp_error()
     if len(request.json) > 0:
         dataset_name = request.json['name']
+        
         if datasets.create(dataset_name):
-            result = resp_created
+            result = resp_created()
+
             result['data'] = {
                 "name": dataset_name
             }
+
         else:
-            result = resp_conflict
+            result = resp_conflict()
         
     return json(result, status=201)
 
-@app.put('/datasets/<dataset_name>/<label_name>')
+
+@app.route('/datasets/<dataset_name>/<label_name>', methods=['PUT'])
 async def route_new_file(request, dataset_name, label_name):
-    result = resp_error
+    result = resp_error()
     file_added = datasets.add_file(request, dataset_name, label_name)
+
     if file_added:
-        result = resp_created
+        result = resp_created()
+
     return json(result, status=201)
 
 if __name__ == '__main__':

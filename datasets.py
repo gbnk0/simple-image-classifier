@@ -1,5 +1,5 @@
 import os
-from utils import make_dir, normalize_name, make_uuid
+from utils import make_dir, normalize_name, make_uuid, save_from_url
 
 class Datasets(object):
 
@@ -29,7 +29,6 @@ class Datasets(object):
         return result
     
     def add_file(self, request, dataset_name, label_name):
-        result = False
         label_dir = self.datasets_dir + \
             normalize_name(dataset_name) + '/' + label_name
 
@@ -37,15 +36,21 @@ class Datasets(object):
         filename = make_uuid() + '.jpg'
         filepath = label_dir + '/' + filename
 
+        is_json = False
+        if hasattr(request, 'json'):
+            if 'url' in request.json.keys():
+                is_json = True
+                print('IS JSON: ', is_json)
+
+        if is_json:
+            if 'url' in request.json:
+                save_from_url(request.json['url'], filepath)
+                result = True
+
         # if file passed in body
-        if len(request.body) > 0:
+        if len(request.body) > 0 and not is_json:
             with open(filepath, 'wb') as file:
                 file.write(request.body)
                 result = True
-
-        if 'json' in request.keys() and len(request.json) > 0:
-            if 'url' in request.json:
-                print('toto')
-                result = True
-
+        
         return result

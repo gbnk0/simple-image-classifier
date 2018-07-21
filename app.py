@@ -4,7 +4,7 @@ from sanic.response import json
 from responses import *
 from datasets import Datasets
 from queue import Queue
-from utils import Run
+from utils import Run, classify
 
 app = Sanic()
 
@@ -73,6 +73,17 @@ async def route_train_dataset(request, dataset_name):
 
     return json(result, status=201)
 
+
+@app.route('/datasets/<dataset_name>/label', methods=['POST'])
+async def route_train_dataset(request, dataset_name):
+    result = resp_success()
+    request_json = request.json
+
+    dataset = datasets.get(name=dataset_name)
+
+    result['data'] = classify(dataset['path'])
+
+    return json(result, status=201)
 
 @app.route('/tasks', methods=['GET'])
 async def route_get_tasks(request):

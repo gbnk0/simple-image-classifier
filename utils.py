@@ -54,7 +54,6 @@ def syscmd(cmd, encoding=''):
         return output
     return p.returncode
 
-
 def train(dataset_path, training_steps):
     bottleneck_dir = dataset_path + 'bottlenecks'
     train_cmd = "python3.6 retrain.py "\
@@ -65,6 +64,32 @@ def train(dataset_path, training_steps):
                 "--image_dir {2}labels/".format(bottleneck_dir, training_steps, dataset_path)
     print(train_cmd)
     print(subprocess.check_output(train_cmd, shell=True))
+
+def classify(dataset_path):
+    results = []
+    train_cmd = "python3.6 label.py "\
+                "--output_layer=final_result "\
+                "--input_layer=Placeholder "\
+                "--graph={0}retrained_graph.pb "\
+                "--labels={0}retrained_labels.txt "\
+                "--image test.jpg".format(dataset_path)
+    print(train_cmd)
+    # very dirty part
+    result = str(subprocess.check_output(train_cmd, shell=True))
+    labels = result.split('### LABELS:')[1]
+    labels = labels.split('\\n')
+    for l in labels:
+        if len(l) > 2:
+            line = l.split(' ')
+            label = line[0]
+            accuracy = float(line[1]) * 100
+            data = {
+                "label": label,
+                "accuracy": accuracy
+            }
+            results.append(data)
+    print(results)
+    return results
 
 
 class Run(threading.Thread):

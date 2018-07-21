@@ -1,0 +1,3 @@
+requests==2.18.4
+sanic==0.7.0
+gunicorn==19.8.1

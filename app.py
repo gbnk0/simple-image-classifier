@@ -1,34 +1,43 @@
+import os
 from sanic import Sanic
 from sanic.response import json
 from responses import *
-import database as db
+from datasets import Datasets
+from utils import make_dir, normalize_name
 
 app = Sanic()
 
-@app.post('/label')
-async def route_label_picture(request):
-    return json({'data': 'a smartphone'})
+data_dir = 'data/'
+datasets_dir = data_dir + 'datasets/'
 
+datasets = Datasets(datasets_dir)
 
 @app.get('/datasets')
 async def route_get_datases(request):
-    return json(db.get_datasets(), status=200)
+    return json(datasets.get(), status=200)
 
 @app.put('/datasets')
 async def route_new_dataset(request):
     result = resp_error
     if len(request.json) > 0:
-        if db.insert_dataset(request.json['name']):
+        dataset_name = request.json['name']
+        if datasets.create(dataset_name):
             result = resp_created
+            result['data'] = {
+                "name": dataset_name
+            }
         else:
             result = resp_conflict
         
     return json(result, status=201)
 
+@app.put('/datasets/<dataset_name>/<label_name>')
+async def route_new_file(request, dataset_name, label_name):
+    result = resp_error
+    file_added = datasets.add_file(request, dataset_name, label_name)
+    if file_added:
+        result = resp_created
+    return json(result, status=201)
+
 if __name__ == '__main__':
-    db.make_dir('data/')
-    db.create_tables()
-    db.insert_dataset('test1')
-    db.get_datasets()
     app.run(host='0.0.0.0', port=8080)
-    db.close()

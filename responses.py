@@ -1,3 +1,6 @@
+def resp_success():
+    return {'status': 'success'}
+
 def resp_created():
     return {'status': 'created'}
 

@@ -138,4 +138,5 @@ if __name__ == "__main__":
   labels = load_labels(label_file)
   print('### LABELS:')
   for i in top_k:
-    print(labels[i], results[i])
+    result_label = "[{}] -> [{}]".format(labels[i], results[i])
+    print("LABEL: ", result_label)

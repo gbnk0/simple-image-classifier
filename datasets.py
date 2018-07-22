@@ -1,5 +1,5 @@
 import os
-from utils import make_dir, normalize_name, make_uuid, save_from_url, is_jpeg
+from utils import make_dir, normalize_name, make_uuid, save_from_url, save_from_bytes
 
 def is_trained(dataset_path):
     result = False
@@ -82,10 +82,8 @@ class Datasets(object):
             result = True
 
         # if file passed in body
-        else:
-            if is_jpeg(request.body):
-                with open(filepath, 'wb') as file:
-                    file.write(request.body)
-                    result = True
+        else:      
+            save_from_bytes(request.body, filepath)
+            result = True
         
         return result

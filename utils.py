@@ -15,6 +15,14 @@ def is_jpeg(file):
 
     return result
 
+def save_from_bytes(file_bytes, dest_file):
+    result = False
+    if is_jpeg(file_bytes):
+        with open(dest_file, 'wb') as file:
+            file.write(file_bytes)
+            result = True
+    return result
+
 def save_from_url(url, dest_file):
     result = False
 
@@ -44,16 +52,6 @@ def normalize_name(s):
     s = re.sub(r"\s+", '_', s)
     return s
 
-
-def syscmd(cmd, encoding=''):
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT,
-              close_fds=True)
-    p.wait()
-    output = p.stdout.read()
-    if len(output) > 1:
-        return output
-    return p.returncode
-
 def train(dataset_path, training_steps):
     bottleneck_dir = dataset_path + 'bottlenecks'
     train_cmd = "python3.6 retrain.py "\
@@ -65,30 +63,48 @@ def train(dataset_path, training_steps):
     print(train_cmd)
     print(subprocess.check_output(train_cmd, shell=True))
 
-def classify(dataset_path):
+def classify(dataset_path, request):
+    filename = make_uuid() + '.jpg'
+    filepath = dataset_path + '/' + filename
+
+    # if url passed to json body
+    try:
+        request_json = request.json
+    except:
+        request_json = {}
+
+    if 'url' in request_json.keys():
+        save_from_url(request_json['url'], filepath)
+    # if file passed in body
+    else:
+        save_from_bytes(request.body, filepath)
+
     results = []
     train_cmd = "python3.6 label.py "\
                 "--output_layer=final_result "\
                 "--input_layer=Placeholder "\
                 "--graph={0}retrained_graph.pb "\
                 "--labels={0}retrained_labels.txt "\
-                "--image test.jpg".format(dataset_path)
+                "--image {1}".format(dataset_path, filepath)
     print(train_cmd)
     # very dirty part
     result = str(subprocess.check_output(train_cmd, shell=True))
+    print(result)
     labels = result.split('### LABELS:')[1]
-    labels = labels.split('\\n')
+    labels = labels.split('LABEL: ')
     for l in labels:
         if len(l) > 2:
-            line = l.split(' ')
-            label = line[0]
-            accuracy = float(line[1]) * 100
+            accuracy = re.findall("\d+\.\d+", l)[0]
+            accuracy = float(accuracy) * 100
+            label = l.rstrip().split(' ->')[0]
+            label = label.replace(' [', '').replace(']', '')
             data = {
                 "label": label,
                 "accuracy": accuracy
             }
             results.append(data)
     print(results)
+    os.remove(filepath)
     return results
 
 

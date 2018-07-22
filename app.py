@@ -75,15 +75,13 @@ async def route_train_dataset(request, dataset_name):
 
 
 @app.route('/datasets/<dataset_name>/label', methods=['POST'])
-async def route_train_dataset(request, dataset_name):
+async def route_label_item(request, dataset_name):
     result = resp_success()
-    request_json = request.json
-
     dataset = datasets.get(name=dataset_name)
-
-    result['data'] = classify(dataset['path'])
+    result['data'] = classify(dataset['path'], request)
 
     return json(result, status=201)
+    
 
 @app.route('/tasks', methods=['GET'])
 async def route_get_tasks(request):

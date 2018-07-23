@@ -17,11 +17,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
 import argparse
 
 import numpy as np
 import tensorflow as tf
 
+tf.logging.set_verbosity(tf.logging.WARN)
 
 def load_graph(model_file):
   graph = tf.Graph()

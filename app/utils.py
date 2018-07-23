@@ -7,6 +7,7 @@ import threading
 import subprocess
 import filetype
 import retrain
+import label
 
 def is_jpeg(file):
     result = False
@@ -82,33 +83,15 @@ def classify(dataset_path, request):
         save_from_bytes(request.body, filepath)
     # ADD sys.executable for python bin
 
-    results = []
-    train_cmd = "{0} label.py "\
-                "--output_layer=final_result "\
-                "--input_layer=Placeholder "\
-                "--graph={1}retrained_graph.pb "\
-                "--labels={1}retrained_labels.txt "\
-                "--image {2}".format(sys.executable, dataset_path, filepath)
-    print(train_cmd)
-    # very dirty part
-    result = str(subprocess.check_output(train_cmd, shell=True))
-    print(result)
-    labels = result.split('### LABELS:')[1]
-    labels = labels.split('LABEL: ')
-    for l in labels:
-        if len(l) > 2:
-            accuracy = re.findall("\d+\.\d+", l)[0]
-            accuracy = float(accuracy) * 100
-            label = l.rstrip().split(' ->')[0]
-            label = label.replace(' [', '').replace(']', '')
-            data = {
-                "label": label,
-                "accuracy": accuracy
-            }
-            results.append(data)
-    print(results)
-    os.remove(filepath)
-    return results
+    graph_path = dataset_path + "retrained_graph.pb"
+    labels_path = dataset_path + "retrained_labels.txt"
+    labels = label.run(filename=filepath,
+                       output_layer="final_result",
+                       input_layer="Placeholder",
+                       graph=graph_path,
+                       labels=labels_path)
+
+    return list(labels)
 
 
 class Run(threading.Thread):

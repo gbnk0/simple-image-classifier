@@ -1,4 +1,5 @@
 import os
+from json import loads, dumps
 from sanic import Sanic
 from sanic.response import json
 from responses import *
@@ -78,7 +79,8 @@ async def route_train_dataset(request, dataset_name):
 async def route_label_item(request, dataset_name):
     result = resp_success()
     dataset = datasets.get(name=dataset_name)
-    result['data'] = classify(dataset['path'], request)
+    labels = classify(dataset['path'], request)
+    result['data'] = labels
 
     return json(result, status=201)
     

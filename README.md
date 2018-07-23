@@ -18,4 +18,4 @@ It will listen on localhost:8080
 
 #### POSTMAN DOC:
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/bbee16b8f54e415f3da1)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://documenter.getpostman.com/view/3045659/RWMHM7ir)

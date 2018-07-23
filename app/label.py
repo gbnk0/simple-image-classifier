@@ -72,50 +72,20 @@ def load_labels(label_file):
   return label
 
 
-if __name__ == "__main__":
-  file_name = "tensorflow/examples/label_image/data/grace_hopper.jpg"
-  model_file = \
-    "tensorflow/examples/label_image/data/inception_v3_2016_08_28_frozen.pb"
-  label_file = "tensorflow/examples/label_image/data/imagenet_slim_labels.txt"
+def run(**kwargs):
+  final_results = []
+  file_name = kwargs.get('filename')
+  graph_file = kwargs.get('graph')
+  label_file = kwargs.get('labels')
+  input_layer = kwargs.get('input_layer')
+  output_layer = kwargs.get('output_layer')
+
   input_height = 299
   input_width = 299
   input_mean = 0
   input_std = 255
-  input_layer = "input"
-  output_layer = "InceptionV3/Predictions/Reshape_1"
 
-  parser = argparse.ArgumentParser()
-  parser.add_argument("--image", help="image to be processed")
-  parser.add_argument("--graph", help="graph/model to be executed")
-  parser.add_argument("--labels", help="name of file containing labels")
-  parser.add_argument("--input_height", type=int, help="input height")
-  parser.add_argument("--input_width", type=int, help="input width")
-  parser.add_argument("--input_mean", type=int, help="input mean")
-  parser.add_argument("--input_std", type=int, help="input std")
-  parser.add_argument("--input_layer", help="name of input layer")
-  parser.add_argument("--output_layer", help="name of output layer")
-  args = parser.parse_args()
-
-  if args.graph:
-    model_file = args.graph
-  if args.image:
-    file_name = args.image
-  if args.labels:
-    label_file = args.labels
-  if args.input_height:
-    input_height = args.input_height
-  if args.input_width:
-    input_width = args.input_width
-  if args.input_mean:
-    input_mean = args.input_mean
-  if args.input_std:
-    input_std = args.input_std
-  if args.input_layer:
-    input_layer = args.input_layer
-  if args.output_layer:
-    output_layer = args.output_layer
-
-  graph = load_graph(model_file)
+  graph = load_graph(graph_file)
   t = read_tensor_from_image_file(
       file_name,
       input_height=input_height,
@@ -136,7 +106,13 @@ if __name__ == "__main__":
 
   top_k = results.argsort()[-5:][::-1]
   labels = load_labels(label_file)
-  print('### LABELS:')
+  
   for i in top_k:
-    result_label = "[{}] -> [{}]".format(labels[i], results[i])
-    print("LABEL: ", result_label)
+    data = {
+        "label": labels[i],
+        "accuracy": results[i]
+    }
+    final_results.append(data)
+  
+  print("RESULTS: ", final_results)
+  return list(final_results)

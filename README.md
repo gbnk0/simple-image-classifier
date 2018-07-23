@@ -1,6 +1,10 @@
 # simple-image-classifier
 Simple image classifier microservice using tensorflow
 
+![pipeline status](https://travis-ci.org/gbnk0/simple-image-classifier.svg?branch=master)
+![python_version](https://img.shields.io/badge/python-3.5%2C3.6-blue.svg)
+
+
 #### PREREQUISITES FOR LOCAL RUN
 - A linux system
 - python >= 3.5

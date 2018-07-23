@@ -1,0 +1,11 @@
+jobs:
+  include:
+    - stage: build-image
+      script:
+        - docker build -t $DOCKER_USER/simple-image-classifier .
+
+      after_success:
+        - docker login -u $DOCKER_USER -p $DOCKER_PASS
+        - docker tag $DOCKER_USER/simple-image-classifier $DOCKER_USER/simple-image-classifier:$TRAVIS_BUILD_NUMBER;
+        - docker push $DOCKER_USER:$TRAVIS_BUILD_NUMBER;
+        - docker push $DOCKER_USER/simple-image-classifier:latest

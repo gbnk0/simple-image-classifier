@@ -1,10 +1,12 @@
 import os
+import sys
 import re
 import uuid
 import requests
 import threading
 import subprocess
 import filetype
+import retrain
 
 def is_jpeg(file):
     result = False
@@ -54,14 +56,14 @@ def normalize_name(s):
 
 def train(dataset_path, training_steps):
     bottleneck_dir = dataset_path + 'bottlenecks'
-    train_cmd = "python3.6 retrain.py "\
-                "--bottleneck_dir={0} "\
-                "--how_many_training_steps={1} "\
-                "--output_graph={2}retrained_graph.pb "\
-                "--output_labels={2}retrained_labels.txt "\
-                "--image_dir {2}labels/".format(bottleneck_dir, training_steps, dataset_path)
-    print(train_cmd)
-    print(subprocess.check_output(train_cmd, shell=True))
+    labels_path = dataset_path + "labels/"
+    output_graph = dataset_path + "retrained_graph.pb"
+    output_labels = dataset_path + "retrained_labels.txt"
+
+    retrain.run(bottleneck_dir=bottleneck_dir, 
+                how_many_training_steps=training_steps,
+                image_dir=labels_path, output_graph=output_graph,
+                output_labels=output_labels)
 
 def classify(dataset_path, request):
     filename = make_uuid() + '.jpg'
@@ -78,14 +80,15 @@ def classify(dataset_path, request):
     # if file passed in body
     else:
         save_from_bytes(request.body, filepath)
+    # ADD sys.executable for python bin
 
     results = []
-    train_cmd = "python3.6 label.py "\
+    train_cmd = "{0} label.py "\
                 "--output_layer=final_result "\
                 "--input_layer=Placeholder "\
-                "--graph={0}retrained_graph.pb "\
-                "--labels={0}retrained_labels.txt "\
-                "--image {1}".format(dataset_path, filepath)
+                "--graph={1}retrained_graph.pb "\
+                "--labels={1}retrained_labels.txt "\
+                "--image {2}".format(sys.executable, dataset_path, filepath)
     print(train_cmd)
     # very dirty part
     result = str(subprocess.check_output(train_cmd, shell=True))
@@ -118,7 +121,6 @@ class Run(threading.Thread):
     while True:
         task = self.queue.get()
         if task['action'] == 'train':
-            print(task)
             dataset_path = task['dataset']['path']
             training_steps = int(task['training_steps'])
             train(dataset_path, training_steps)

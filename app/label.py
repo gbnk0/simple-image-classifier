@@ -13,10 +13,6 @@
 # limitations under the License.
 # ==============================================================================
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import os
 import argparse
 
@@ -44,6 +40,7 @@ def read_tensor_from_image_file(file_name,
                                 input_std=255):
   input_name = "file_reader"
   output_name = "normalized"
+  filebytes = open(file_name, 'rb')
   file_reader = tf.read_file(file_name, input_name)
   if file_name.endswith(".png"):
     image_reader = tf.image.decode_png(
@@ -56,6 +53,7 @@ def read_tensor_from_image_file(file_name,
   else:
     image_reader = tf.image.decode_jpeg(
         file_reader, channels=3, name="jpeg_reader")
+
   float_caster = tf.cast(image_reader, tf.float32)
   dims_expander = tf.expand_dims(float_caster, 0)
   resized = tf.image.resize_bilinear(dims_expander, [input_height, input_width])
@@ -112,9 +110,8 @@ def run(**kwargs):
   for i in top_k:
     data = {
         "label": labels[i],
-        "accuracy": results[i]
+        "accuracy": round(float(results[i]) * 100, 2)
     }
     final_results.append(data)
   
-  print("RESULTS: ", final_results)
-  return list(final_results)
+  return final_results

@@ -15,7 +15,7 @@ python3 app.py
 
 It will listen on localhost:8080
 
-### POPULATING DATASET
+#### POPULATING DATASET
 
 When you successfully created a dataset using the /datasets endpoint:
 One method for populating the new dataset is to copy all your categories folders (dog, cat, fish, people) to the data/{datasetName}/labels/ folder.

@@ -6,6 +6,7 @@ import requests
 import threading
 import subprocess
 import filetype
+import retrain
 
 def is_jpeg(file):
     result = False
@@ -55,14 +56,14 @@ def normalize_name(s):
 
 def train(dataset_path, training_steps):
     bottleneck_dir = dataset_path + 'bottlenecks'
-    train_cmd = "{0} retrain.py "\
-                "--bottleneck_dir={1} "\
-                "--how_many_training_steps={2} "\
-                "--output_graph={3}retrained_graph.pb "\
-                "--output_labels={3}retrained_labels.txt "\
-                "--image_dir {3}labels/".format(sys.executable, bottleneck_dir, training_steps, dataset_path)
-    print(train_cmd)
-    print(subprocess.check_output(train_cmd, shell=True))
+    labels_path = dataset_path + "labels/"
+    output_graph = dataset_path + "retrained_graph.pb"
+    output_labels = dataset_path + "retrained_labels.txt"
+
+    retrain.run(bottleneck_dir=bottleneck_dir, 
+                how_many_training_steps=training_steps,
+                image_dir=labels_path, output_graph=output_graph,
+                output_labels=output_labels)
 
 def classify(dataset_path, request):
     filename = make_uuid() + '.jpg'
@@ -120,7 +121,6 @@ class Run(threading.Thread):
     while True:
         task = self.queue.get()
         if task['action'] == 'train':
-            print(task)
             dataset_path = task['dataset']['path']
             training_steps = int(task['training_steps'])
             train(dataset_path, training_steps)

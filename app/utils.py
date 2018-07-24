@@ -105,16 +105,20 @@ class Worker(object):
 
     def run(self):
         while True:
-            print("IM A WORKER")
-            # while True:
-            task = self.queue.get()
-            print("MY TASK: ", task)
-            if task['action'] == 'train':
-                dataset_path = task['dataset']['path']
-                training_steps = int(task['training_steps'])
-                train(dataset_path, training_steps)
-                self.queue.task_done()
-            time.sleep(1)
+            try:
+                print("IM A WORKER")
+                # while True:
+                task = self.queue.get()
+                print("MY TASK: ", task)
+                if task['action'] == 'train':
+                    dataset_path = task['dataset']['path']
+                    training_steps = int(task['training_steps'])
+                    train(dataset_path, training_steps)
+                    self.queue.task_done()
+                time.sleep(1)
+            except Exception as e:
+                print(e)
+                pass
 
 
 def configure_app(app):

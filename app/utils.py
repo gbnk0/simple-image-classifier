@@ -108,3 +108,7 @@ class Run(threading.Thread):
             training_steps = int(task['training_steps'])
             train(dataset_path, training_steps)
         self.queue.task_done()
+
+
+def configure_app(app):
+    app.config.debug = True

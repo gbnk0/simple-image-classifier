@@ -7,8 +7,8 @@ import threading
 import filetype
 import retrain
 import label
-import multiprocessing
 import time
+from pathlib import Path
 
 def is_jpeg(file):
     result = False
@@ -93,6 +93,9 @@ def classify(dataset_path, request):
 
     return list(labels)
 
+def remove_files(path, files):
+    for p in Path(path).glob(files):
+        p.unlink()
 
 class Worker(object):
 
@@ -111,6 +114,7 @@ class Worker(object):
                 task = self.queue.get()
                 print("MY TASK: ", task)
                 if task['action'] == 'train':
+                    remove_files("/tmp/tfhub_modules/", "*.lock")
                     dataset_path = task['dataset']['path']
                     training_steps = int(task['training_steps'])
                     train(dataset_path, training_steps)
@@ -119,7 +123,6 @@ class Worker(object):
             except Exception as e:
                 print(e)
                 pass
-
 
 def configure_app(app):
     app.config.debug = True

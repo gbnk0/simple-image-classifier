@@ -115,10 +115,6 @@ tensorflow_model_server --port=9000 --model_name=my_image_classifier \
 """
 # pylint: enable=line-too-long
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import argparse
 import collections
 from datetime import datetime

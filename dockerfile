@@ -1,6 +1,6 @@
 FROM debian:stretch-slim
 
-COPY app/* /app/
+COPY ./app/ /app/
 
 WORKDIR /app
 

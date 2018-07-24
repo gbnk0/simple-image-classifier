@@ -16,7 +16,7 @@ Simple image classifier microservice using tensorflow
 docker run -p8080:8080 gbnk0/simple-image-classifier:latest
 ```
 
-##### 
+##### RUN WITH PYTHON
 Go to the app folder:
 ```
 cd app/

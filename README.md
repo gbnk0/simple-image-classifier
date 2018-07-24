@@ -9,7 +9,14 @@ Simple image classifier microservice using tensorflow
 - A linux system
 - python >= 3.5
 
-#### QUICKSTART GUIDE ==
+#### QUICKSTART GUIDE
+
+##### RUN WITH DOCKER
+``` 
+docker run -p8080:8080 gbnk0/simple-image-classifier
+```
+
+##### 
 Go to the app folder:
 ```
 cd app/

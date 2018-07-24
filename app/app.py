@@ -5,9 +5,10 @@ from sanic.response import json
 from responses import *
 from datasets import Datasets
 from queue import Queue
-from utils import Run, classify
+from utils import Worker, classify, configure_app
 
 app = Sanic()
+configure_app(app)
 
 queue = Queue()
 
@@ -92,8 +93,9 @@ async def route_get_tasks(request):
     }
     return json(result, status=200)
 
+
 if __name__ == '__main__':
-    r = Run(queue)
-    r.setDaemon(True)
-    r.start()
+    p = Worker(queue)
+    # p.start()
     app.run(host='0.0.0.0', port=8080)
+

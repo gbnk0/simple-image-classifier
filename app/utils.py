@@ -4,10 +4,11 @@ import re
 import uuid
 import requests
 import threading
-import subprocess
 import filetype
 import retrain
 import label
+import multiprocessing
+import time
 
 def is_jpeg(file):
     result = False
@@ -61,7 +62,7 @@ def train(dataset_path, training_steps):
     output_graph = dataset_path + "retrained_graph.pb"
     output_labels = dataset_path + "retrained_labels.txt"
 
-    retrain.run(bottleneck_dir=bottleneck_dir, 
+    return retrain.run(bottleneck_dir=bottleneck_dir, 
                 how_many_training_steps=training_steps,
                 image_dir=labels_path, output_graph=output_graph,
                 output_labels=output_labels)
@@ -81,7 +82,6 @@ def classify(dataset_path, request):
     # if file passed in body
     else:
         save_from_bytes(request.body, filepath)
-    # ADD sys.executable for python bin
 
     graph_path = dataset_path + "retrained_graph.pb"
     labels_path = dataset_path + "retrained_labels.txt"
@@ -94,17 +94,32 @@ def classify(dataset_path, request):
     return list(labels)
 
 
-class Run(threading.Thread):
+class Worker(object):
 
-  def __init__(self, queue):
-    threading.Thread.__init__(self)
-    self.queue = queue
+    def __init__(self, queue):
+        self.queue = queue
 
-  def run(self):
-    while True:
-        task = self.queue.get()
-        if task['action'] == 'train':
-            dataset_path = task['dataset']['path']
-            training_steps = int(task['training_steps'])
-            train(dataset_path, training_steps)
-        self.queue.task_done()
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+        while True:
+            try:
+                print("IM A WORKER")
+                # while True:
+                task = self.queue.get()
+                print("MY TASK: ", task)
+                if task['action'] == 'train':
+                    dataset_path = task['dataset']['path']
+                    training_steps = int(task['training_steps'])
+                    train(dataset_path, training_steps)
+                    self.queue.task_done()
+                time.sleep(1)
+            except Exception as e:
+                print(e)
+                pass
+
+
+def configure_app(app):
+    app.config.debug = True

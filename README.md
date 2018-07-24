@@ -13,7 +13,7 @@ Simple image classifier microservice using tensorflow
 
 ##### RUN WITH DOCKER
 ``` 
-docker run -p8080:8080 gbnk0/simple-image-classifier
+docker run -p8080:8080 gbnk0/simple-image-classifier:latest
 ```
 
 ##### 

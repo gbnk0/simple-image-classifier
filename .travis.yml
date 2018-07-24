@@ -9,3 +9,6 @@ jobs:
         - docker tag $DOCKER_USER/simple-image-classifier $DOCKER_USER/simple-image-classifier:$TRAVIS_BUILD_NUMBER;
         - docker push $DOCKER_USER:$TRAVIS_BUILD_NUMBER;
         - docker push $DOCKER_USER/simple-image-classifier:latest
+branches:
+  only:
+    - master

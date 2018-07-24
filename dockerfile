@@ -1,8 +1,6 @@
 FROM debian:stretch
-COPY * /app/
+COPY app/* /app/
 WORKDIR /app
-ENV HTTP_PROXY="http://127.0.0.1:3128"
-ENV HTTPS_PROXY="http://127.0.0.1:3128"
 RUN apt-get update && apt-get -y install python3 python3-pip && \
     pip3 install tensorflow>=1.9.0 && \
     pip3 install -r requirements.txt && \

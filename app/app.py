@@ -93,6 +93,7 @@ async def route_get_tasks(request):
     }
     return json(result, status=200)
 
+
 p = Worker(queue)
 
 if __name__ == '__main__':

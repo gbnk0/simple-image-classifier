@@ -56,14 +56,16 @@ def normalize_name(s):
 
 
 def classify(dataset_path, request):
+    request_json = {}
     filename = make_uuid() + '.jpg'
     filepath = dataset_path + '/' + filename
 
     # if url passed to json body
     try:
         request_json = request.json
+
     except Exception as e:
-        request_json = {}
+        print(e)
 
     if 'url' in request_json.keys():
         save_from_url(request_json['url'], filepath)

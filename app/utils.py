@@ -36,7 +36,7 @@ def save_from_urls(urls, label_dir):
     for url in urls:
         filename = make_uuid() + '.jpg'
         filepath = label_dir + '/' + filename
-        
+
         with open(filepath, "wb") as f:
             
             response = requests.get(url)
@@ -104,7 +104,7 @@ def train(dataset_path, training_steps):
     output_graph = dataset_path + "retrained_graph.pb"
     output_labels = dataset_path + "retrained_labels.txt"
 
-    return retrain.run(bottleneck_dir=bottleneck_dir, 
+    return retrain.run(bottleneck_dir=bottleneck_dir,
                 how_many_training_steps=training_steps,
                 image_dir=labels_path, output_graph=output_graph,
                 output_labels=output_labels)

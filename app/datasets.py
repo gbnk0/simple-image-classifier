@@ -40,7 +40,7 @@ def is_trainable(labels):
         for label in labels:
             if label['items'] >= 1:
                 score += 1
-                
+
     if score > 1:
         result = True
     
@@ -102,7 +102,7 @@ class Datasets(object):
 
         # if url passed to json body
         try:
-            if type(request.json) == dict:
+            if isinstance(request.json, dict):
                 request_json = request.json
 
         except Exception as e:

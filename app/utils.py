@@ -56,6 +56,7 @@ def normalize_name(s):
     s = re.sub(r"\s+", '_', s)
     return s
 
+# Tensorflow training function
 def train(dataset_path, training_steps):
     bottleneck_dir = dataset_path + 'bottlenecks'
     labels_path = dataset_path + "labels/"
@@ -109,10 +110,9 @@ class Worker(object):
     def run(self):
         while True:
             try:
-                print("IM A WORKER")
                 # while True:
                 task = self.queue.get()
-                print("MY TASK: ", task)
+                print("NEW JOB: ", task)
                 if task['action'] == 'train':
                     remove_files("/tmp/tfhub_modules/", "*.lock")
                     dataset_path = task['dataset']['path']
@@ -126,3 +126,7 @@ class Worker(object):
 
 def configure_app(app):
     app.config.debug = True
+    app.config.port = 8080
+    app.config.host = "0.0.0.0"
+    app.config.LOGO = None
+    

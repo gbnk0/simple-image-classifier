@@ -33,6 +33,19 @@ def last_trained_date(dataset_path):
 
     return result
 
+def is_trainable(labels):
+    result = False
+    score = 0
+    if len(labels) > 1:
+        for label in labels:
+            if label['items'] >= 1:
+                score += 1
+                
+    if score > 1:
+        result = True
+    
+    return result
+
 class Datasets(object):
 
     def __init__(self, datasets_dir):
@@ -53,7 +66,8 @@ class Datasets(object):
                 "labels": labels,
                 "path": dataset_path,
                 "trained": is_trained(dataset_path),
-                "last_trained_on": last_trained_date(dataset_path)
+                "last_trained_on": last_trained_date(dataset_path),
+                "trainable": is_trainable(labels)
             }
             if name:
                 name = normalize_name(name)

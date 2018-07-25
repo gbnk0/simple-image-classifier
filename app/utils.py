@@ -111,18 +111,17 @@ def train(dataset_path, training_steps):
 
 class TrainWorker(object):
 
-    def __init__(self, dataset_path, training_steps, results):
+    def __init__(self, dataset_path, training_steps):
         self.dataset_path = dataset_path
         self.training_steps = training_steps
-        self.results = results
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
         thread.start()
 
     def run(self):        
-        self.results = train(self.dataset_path, self.training_steps)
-        return self.results
+        results = train(self.dataset_path, self.training_steps)
+        return results
 
 
 def configure_app(app):

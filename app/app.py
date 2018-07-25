@@ -55,7 +55,9 @@ async def route_new_file(request, dataset_name, label_name):
 
 @app.route('/datasets/<dataset_name>/train', methods=['POST'])
 async def route_train_dataset(request, dataset_name):
-    result = resp('success')
+    result = resp('error')
+    result['data'] = {}
+
     request_json = request.json
 
     dataset = datasets.get(name=dataset_name)
@@ -66,13 +68,12 @@ async def route_train_dataset(request, dataset_name):
         "dataset": dataset,
         "training_steps": training_steps
     }
-
-    task = TrainWorker(dataset['path'], training_steps)
-    if "ERROR" in task:
-        print('ERROR in T')
-
-    result['data'] = {}
-    result['data']['task'] = train_task
+    if dataset['trainable'] == True:
+        TrainWorker(dataset['path'], training_steps)
+        result = resp('success')
+        result['data']['task'] = train_task
+    else:
+        result['reason'] =  "This dataset is not trainable"
 
     return json(result, status=200)
 

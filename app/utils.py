@@ -6,7 +6,6 @@ import threading
 import filetype
 import retrain
 import label
-import time
 from pathlib import Path
 
 def is_jpeg(file):
@@ -113,6 +112,7 @@ class TrainWorker(object):
         
         try:
             train(self.dataset_path, self.training_steps)
+            
         except Exception as e:
             print(e)
 

@@ -67,7 +67,9 @@ async def route_train_dataset(request, dataset_name):
         "training_steps": training_steps
     }
 
-    TrainWorker(dataset['path'], training_steps)
+    task = TrainWorker(dataset['path'], training_steps)
+    if "ERROR" in task:
+        print('ERROR in T')
 
     result['data'] = {}
     result['data']['task'] = train_task

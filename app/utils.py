@@ -111,22 +111,19 @@ def train(dataset_path, training_steps):
 
 class TrainWorker(object):
 
-    def __init__(self, dataset_path, training_steps):
+    def __init__(self, dataset_path, training_steps, results):
         self.dataset_path = dataset_path
         self.training_steps = training_steps
+        self.results = results
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
         thread.start()
 
-    def run(self):
-        print('WORKER LAUNCHED')
-        
-        try:
-            train(self.dataset_path, self.training_steps)
-            
-        except Exception as e:
-            print(e)
+    def run(self):        
+        self.results = train(self.dataset_path, self.training_steps)
+        return self.results
+
 
 def configure_app(app):
     app.config.debug = True

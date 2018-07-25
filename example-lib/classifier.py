@@ -37,7 +37,7 @@ class SimpleClassifier(object):
             return result
         
         def train(self, dataset_name, **kwargs):
-            path = '/datasets/' + dataset_name
+            path = '/datasets/' + dataset_name + '/train'
             result = self.classifier.json_query(path, 'POST', **kwargs)
             return result
 

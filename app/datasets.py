@@ -1,11 +1,36 @@
 import os
-from utils import make_dir, normalize_name, make_uuid, save_from_url, save_from_bytes
+import time
+from utils import make_dir, normalize_name, save_from_urls, save_from_bytes
 
 def is_trained(dataset_path):
     result = False
     if os.path.isfile(dataset_path + 'retrained_labels.txt'):
         if os.path.isfile(dataset_path + 'retrained_graph.pb'):
             result = True
+    return result
+
+def get_labels(dataset_path):
+    labels = []
+    labels_path = dataset_path + 'labels'
+    if os.path.isdir(dataset_path):
+        for label_name in os.listdir(labels_path):
+            label_path = dataset_path + 'labels/' + label_name
+
+            if os.path.isdir(label_path):
+                label_data = {
+                    "name": label_name,
+                    "items": len(os.listdir(label_path))
+                }
+                labels.append(label_data)
+    return labels
+
+def last_trained_date(dataset_path):
+    result = 'never'
+    graph_file = dataset_path + 'retrained_graph.pb'
+
+    if os.path.isfile(graph_file):
+        result = time.ctime(os.path.getmtime(graph_file))
+
     return result
 
 class Datasets(object):
@@ -21,28 +46,22 @@ class Datasets(object):
 
         for dataset_name in os.listdir(self.datasets_dir):
             dataset_path = self.datasets_dir + dataset_name + '/'
-            labels_path = dataset_path + 'labels'
+            labels = get_labels(dataset_path)
 
-            if os.path.isdir(dataset_path):
-                labels = []
-                for label in os.listdir(labels_path):
-                    label_path = dataset_path + 'labels/' + label
+            dataset = {
+                "name": dataset_name,
+                "labels": labels,
+                "path": dataset_path,
+                "trained": is_trained(dataset_path),
+                "last_trained_on": last_trained_date(dataset_path)
+            }
+            if name:
+                name = normalize_name(name)
+                if dataset_name == name:
+                    return dataset
 
-                    if os.path.isdir(label_path):
-                        labels.append(label)
+            results.append(dataset)
 
-                dataset = {
-                    "name": dataset_name,
-                    "labels": labels,
-                    "path": dataset_path,
-                    "trained": is_trained(dataset_path)
-                }
-                if name:
-                    name = normalize_name(name)
-                    if dataset_name == name:
-                        return dataset
-
-                results.append(dataset)
         return results
 
 
@@ -60,31 +79,27 @@ class Datasets(object):
 
         return result
     
-    def add_file(self, request, dataset_name, label_name):
+    def add_files(self, request, dataset_name, label_name):
 
-        result = False
+        result = []
         request_json = {}
         label_dir = self.datasets_dir + \
             normalize_name(dataset_name) + '/' + 'labels/' + label_name
 
         make_dir(label_dir)
 
-        filename = make_uuid() + '.jpg'
-        filepath = label_dir + '/' + filename
-
         # if url passed to json body
         try:
             request_json = request.json
+
         except Exception as e:
             print(e)
 
-        if 'url' in request_json.keys():
-            save_from_url(request_json['url'], filepath)
-            result = True
+        if 'urls' in request_json.keys():
+            result = save_from_urls(request_json['urls'], label_dir)
 
         # if file passed in body
         else:
-            save_from_bytes(request.body, filepath)
-            result = True
+            result = save_from_bytes(request.body, label_dir)
         
         return result

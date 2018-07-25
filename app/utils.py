@@ -17,26 +17,36 @@ def is_jpeg(file):
 
     return result
 
-def save_from_bytes(file_bytes, dest_file):
-    result = False
+def save_from_bytes(file_bytes, label_dir):
+    result = []
+
+    filename = make_uuid() + '.jpg'
+    filepath = label_dir + '/' + filename
+    
     if is_jpeg(file_bytes):
-        with open(dest_file, 'wb') as file:
+        with open(filepath, 'wb') as file:
             file.write(file_bytes)
-            result = True
-    return result
-
-def save_from_url(url, dest_file):
-    result = False
-
-    with open(dest_file, "wb") as f:
-        response = requests.get(url)
-
-        file = response.content
-        if is_jpeg(file):
-            f.write(file)
-            result = True
+            result.append(filepath)
 
     return result
+
+def save_from_urls(urls, label_dir):
+    saved_files = []
+
+    for url in urls:
+        filename = make_uuid() + '.jpg'
+        filepath = label_dir + '/' + filename
+        
+        with open(filepath, "wb") as f:
+            
+            response = requests.get(url)
+            file = response.content
+
+            if is_jpeg(file):
+                f.write(file)
+                saved_files.append(filepath)
+
+    return saved_files
 
 def make_dir(directory):
     result = False

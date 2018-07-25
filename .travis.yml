@@ -2,7 +2,7 @@ jobs:
   include:
     - stage: build-image
       script:
-        - docker build -t $DOCKER_USER/simple-image-classifier .
+        - docker build --build-arg VCS_REF=`git rev-parse --short HEAD` -t $DOCKER_USER/simple-image-classifier .
 
       after_success:
         - docker login -u $DOCKER_USER -p $DOCKER_PASS

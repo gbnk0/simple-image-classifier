@@ -2,13 +2,10 @@ from sanic import Sanic
 from sanic.response import json
 from responses import *
 from datasets import Datasets
-from queue import Queue
-from utils import Worker, classify, configure_app
+from utils import TrainWorker, classify, configure_app
 
 app = Sanic()
 configure_app(app)
-
-queue = Queue()
 
 data_dir = 'data/'
 datasets_dir = data_dir + 'datasets/'
@@ -60,14 +57,16 @@ async def route_train_dataset(request, dataset_name):
     request_json = request.json
 
     dataset = datasets.get(name=dataset_name)
-    
+    training_steps = request_json.get('training_steps', 50)
+
     train_task = {
         "action": "train",
         "dataset": dataset,
-        "training_steps": request_json.get('training_steps', 50)
+        "training_steps": training_steps
     }
 
-    queue.put(train_task)
+    TrainWorker(dataset['path'], training_steps)
+
     result['data'] = {}
     result['data']['task'] = train_task
 
@@ -82,17 +81,6 @@ async def route_label_item(request, dataset_name):
     result['data'] = labels
 
     return json(result, status=201)
-    
-
-@app.route('/tasks', methods=['GET'])
-async def route_get_tasks(request):
-    result = {
-        "remaining": queue.qsize()
-    }
-    return json(result, status=200)
-
-
-p = Worker(queue)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

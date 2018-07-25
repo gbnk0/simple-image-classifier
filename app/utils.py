@@ -55,17 +55,6 @@ def normalize_name(s):
     s = re.sub(r"\s+", '_', s)
     return s
 
-# Tensorflow training function
-def train(dataset_path, training_steps):
-    bottleneck_dir = dataset_path + 'bottlenecks'
-    labels_path = dataset_path + "labels/"
-    output_graph = dataset_path + "retrained_graph.pb"
-    output_labels = dataset_path + "retrained_labels.txt"
-
-    return retrain.run(bottleneck_dir=bottleneck_dir, 
-                how_many_training_steps=training_steps,
-                image_dir=labels_path, output_graph=output_graph,
-                output_labels=output_labels)
 
 def classify(dataset_path, request):
     filename = make_uuid() + '.jpg'
@@ -97,10 +86,23 @@ def remove_files(path, files):
     for p in Path(path).glob(files):
         p.unlink()
 
-class Worker(object):
+# Tensorflow training function
+def train(dataset_path, training_steps):
+    bottleneck_dir = dataset_path + 'bottlenecks'
+    labels_path = dataset_path + "labels/"
+    output_graph = dataset_path + "retrained_graph.pb"
+    output_labels = dataset_path + "retrained_labels.txt"
 
-    def __init__(self, queue):
-        self.queue = queue
+    return retrain.run(bottleneck_dir=bottleneck_dir, 
+                how_many_training_steps=training_steps,
+                image_dir=labels_path, output_graph=output_graph,
+                output_labels=output_labels)
+
+class TrainWorker(object):
+
+    def __init__(self, dataset_path, training_steps):
+        self.dataset_path = dataset_path
+        self.training_steps = training_steps
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
@@ -108,20 +110,11 @@ class Worker(object):
 
     def run(self):
         print('WORKER LAUNCHED')
-        while True:
-            try:
-                # while True:
-                task = self.queue.get()
-                print("NEW JOB: ", task)
-                if task['action'] == 'train':
-                    remove_files("/tmp/tfhub_modules/", "*.lock")
-                    dataset_path = task['dataset']['path']
-                    training_steps = int(task['training_steps'])
-                    train(dataset_path, training_steps)
-                    self.queue.task_done()
-                time.sleep(1)
-            except Exception as e:
-                print(e)
+        
+        try:
+            train(self.dataset_path, self.training_steps)
+        except Exception as e:
+            print(e)
 
 def configure_app(app):
     app.config.debug = True

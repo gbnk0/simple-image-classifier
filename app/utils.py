@@ -74,7 +74,7 @@ def classify(dataset_path, request):
     # if url passed to json body
     try:
         request_json = request.json
-    except:
+    except Exception as e:
         request_json = {}
 
     if 'url' in request_json.keys():
@@ -121,7 +121,6 @@ class Worker(object):
                 time.sleep(1)
             except Exception as e:
                 print(e)
-                pass
 
 def configure_app(app):
     app.config.debug = True

@@ -22,7 +22,7 @@ def save_from_bytes(file_bytes, label_dir):
 
     filename = make_uuid() + '.jpg'
     filepath = label_dir + '/' + filename
-    
+
     if is_jpeg(file_bytes):
         with open(filepath, 'wb') as file:
             file.write(file_bytes)
@@ -119,14 +119,10 @@ class TrainWorker(object):
         thread.daemon = True
         thread.start()
 
-    def run(self):
-        print('WORKER LAUNCHED')
-        
-        try:
-            train(self.dataset_path, self.training_steps)
-            
-        except Exception as e:
-            print(e)
+    def run(self):        
+        results = train(self.dataset_path, self.training_steps)
+        return results
+
 
 def configure_app(app):
     app.config.debug = True

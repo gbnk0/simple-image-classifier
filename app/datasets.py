@@ -33,6 +33,19 @@ def last_trained_date(dataset_path):
 
     return result
 
+def is_trainable(labels):
+    result = False
+    score = 0
+    if len(labels) > 1:
+        for label in labels:
+            if label['items'] >= 1:
+                score += 1
+                
+    if score > 1:
+        result = True
+    
+    return result
+
 class Datasets(object):
 
     def __init__(self, datasets_dir):
@@ -53,7 +66,8 @@ class Datasets(object):
                 "labels": labels,
                 "path": dataset_path,
                 "trained": is_trained(dataset_path),
-                "last_trained_on": last_trained_date(dataset_path)
+                "last_trained_on": last_trained_date(dataset_path),
+                "trainable": is_trainable(labels)
             }
             if name:
                 name = normalize_name(name)
@@ -81,25 +95,32 @@ class Datasets(object):
     
     def add_files(self, request, dataset_name, label_name):
 
-        result = []
+        result = {
+            "new_files": []
+        }
         request_json = {}
+
+        # if url passed to json body
+        try:
+            if type(request.json) == dict:
+                request_json = request.json
+
+        except Exception as e:
+            print(e)
+
         label_dir = self.datasets_dir + \
             normalize_name(dataset_name) + '/' + 'labels/' + label_name
 
         make_dir(label_dir)
 
-        # if url passed to json body
-        try:
-            request_json = request.json
-
-        except Exception as e:
-            print(e)
-
+        new_files = []
         if 'urls' in request_json.keys():
-            result = save_from_urls(request_json['urls'], label_dir)
-
+            new_files = save_from_urls(request_json['urls'], label_dir)
         # if file passed in body
         else:
-            result = save_from_bytes(request.body, label_dir)
+            if len(request.body) > 32:
+                new_files = save_from_bytes(request.body, label_dir)
         
+        result['new_files'] = new_files
+
         return result

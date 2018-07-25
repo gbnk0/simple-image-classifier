@@ -44,18 +44,25 @@ async def route_new_dataset(request):
 async def route_new_file(request, dataset_name, label_name):
     result = json(resp('error'), status=500)
     files_added = datasets.add_files(request, dataset_name, label_name)
+    new_files = files_added['new_files']
 
-    if files_added:
+    if len(new_files) > 0:
         result_data = resp('created')
         result_data['data'] = files_added
         result = json(result_data, status=201)
+    else:
+        result_data = resp('error')
+        result_data['reason'] = "Maybe you forgot to specify some files to upload"
+        result = json(result_data, status=422)
 
     return result
 
 
 @app.route('/datasets/<dataset_name>/train', methods=['POST'])
 async def route_train_dataset(request, dataset_name):
-    result = resp('success')
+    result = resp('error')
+    result['data'] = {}
+
     request_json = request.json
 
     dataset = datasets.get(name=dataset_name)
@@ -66,11 +73,12 @@ async def route_train_dataset(request, dataset_name):
         "dataset": dataset,
         "training_steps": training_steps
     }
-
-    TrainWorker(dataset['path'], training_steps)
-
-    result['data'] = {}
-    result['data']['task'] = train_task
+    if dataset['trainable'] == True:
+        TrainWorker(dataset['path'], training_steps)
+        result = resp('success')
+        result['data']['task'] = train_task
+    else:
+        result['reason'] =  "This dataset is not trainable"
 
     return json(result, status=200)
 

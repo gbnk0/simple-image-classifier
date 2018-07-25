@@ -102,7 +102,7 @@ def run(**kwargs):
 
   top_k = results.argsort()[-5:][::-1]
   labels = load_labels(label_file)
-  
+
   for i in top_k:
     data = {
         "label": labels[i],

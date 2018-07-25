@@ -8,7 +8,7 @@ class SimpleClassifier(object):
         self.proto = kwargs.get('proto', "http")
         self.uri = "{}://{}:{}".format(self.proto, self.host, self.port)
         self.datasets = self.init_datasets()
-    
+
     def init_datasets(self):
         return SimpleClassifier.Datasets(self)
     

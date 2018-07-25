@@ -43,10 +43,12 @@ async def route_new_dataset(request):
 @app.route('/datasets/<dataset_name>/<label_name>', methods=['PUT'])
 async def route_new_file(request, dataset_name, label_name):
     result = json(resp('error'), status=500)
-    file_added = datasets.add_file(request, dataset_name, label_name)
+    files_added = datasets.add_files(request, dataset_name, label_name)
 
-    if file_added:
-        result = json(resp('created'), status=201)
+    if files_added:
+        result_data = resp('created')
+        result_data['data'] = files_added
+        result = json(result_data, status=201)
 
     return result
 

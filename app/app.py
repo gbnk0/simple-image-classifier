@@ -44,11 +44,16 @@ async def route_new_dataset(request):
 async def route_new_file(request, dataset_name, label_name):
     result = json(resp('error'), status=500)
     files_added = datasets.add_files(request, dataset_name, label_name)
+    new_files = files_added['new_files']
 
-    if files_added:
+    if len(new_files) > 0:
         result_data = resp('created')
         result_data['data'] = files_added
         result = json(result_data, status=201)
+    else:
+        result_data = resp('error')
+        result_data['reason'] = "Maybe you forgot to specify some files to upload"
+        result = json(result_data, status=422)
 
     return result
 

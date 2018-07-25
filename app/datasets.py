@@ -95,25 +95,32 @@ class Datasets(object):
     
     def add_files(self, request, dataset_name, label_name):
 
-        result = []
+        result = {
+            "new_files": []
+        }
         request_json = {}
+
+        # if url passed to json body
+        try:
+            if type(request.json) == dict:
+                request_json = request.json
+
+        except Exception as e:
+            print(e)
+
         label_dir = self.datasets_dir + \
             normalize_name(dataset_name) + '/' + 'labels/' + label_name
 
         make_dir(label_dir)
 
-        # if url passed to json body
-        try:
-            request_json = request.json
-
-        except Exception as e:
-            print(e)
-
+        new_files = []
         if 'urls' in request_json.keys():
-            result = save_from_urls(request_json['urls'], label_dir)
-
+            new_files = save_from_urls(request_json['urls'], label_dir)
         # if file passed in body
         else:
-            result = save_from_bytes(request.body, label_dir)
+            if len(request.body) > 32:
+                new_files = save_from_bytes(request.body, label_dir)
         
+        result['new_files'] = new_files
+
         return result

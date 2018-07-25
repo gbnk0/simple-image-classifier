@@ -22,7 +22,7 @@ def save_from_bytes(file_bytes, label_dir):
 
     filename = make_uuid() + '.jpg'
     filepath = label_dir + '/' + filename
-    
+
     if is_jpeg(file_bytes):
         with open(filepath, 'wb') as file:
             file.write(file_bytes)

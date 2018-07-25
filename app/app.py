@@ -1,5 +1,3 @@
-import os
-from json import loads, dumps
 from sanic import Sanic
 from sanic.response import json
 from responses import *

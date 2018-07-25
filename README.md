@@ -2,6 +2,7 @@
 Simple image classifier microservice using tensorflow
 
 ![pipeline status](https://travis-ci.org/gbnk0/simple-image-classifier.svg?branch=master)
+![dockerbuild](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)
 ![python_version](https://img.shields.io/badge/python-3.5%2C3.6-blue.svg)
 
 
@@ -16,7 +17,7 @@ Simple image classifier microservice using tensorflow
 docker run -p8080:8080 gbnk0/simple-image-classifier
 ```
 
-##### RUN WITH PYTHON
+##### LOCAL RUN WITH PYTHON
 Go to the app folder:
 ```
 cd app/

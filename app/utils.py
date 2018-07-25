@@ -107,6 +107,7 @@ class Worker(object):
         thread.start()
 
     def run(self):
+        print('WORKER LAUNCHED')
         while True:
             try:
                 # while True:

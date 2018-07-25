@@ -1,5 +1,4 @@
 import os
-import sys
 import re
 import uuid
 import requests
@@ -7,7 +6,6 @@ import threading
 import filetype
 import retrain
 import label
-import time
 from pathlib import Path
 
 def is_jpeg(file):
@@ -56,26 +54,18 @@ def normalize_name(s):
     s = re.sub(r"\s+", '_', s)
     return s
 
-def train(dataset_path, training_steps):
-    bottleneck_dir = dataset_path + 'bottlenecks'
-    labels_path = dataset_path + "labels/"
-    output_graph = dataset_path + "retrained_graph.pb"
-    output_labels = dataset_path + "retrained_labels.txt"
-
-    return retrain.run(bottleneck_dir=bottleneck_dir, 
-                how_many_training_steps=training_steps,
-                image_dir=labels_path, output_graph=output_graph,
-                output_labels=output_labels)
 
 def classify(dataset_path, request):
+    request_json = {}
     filename = make_uuid() + '.jpg'
     filepath = dataset_path + '/' + filename
 
     # if url passed to json body
     try:
         request_json = request.json
-    except:
-        request_json = {}
+
+    except Exception as e:
+        print(e)
 
     if 'url' in request_json.keys():
         save_from_url(request_json['url'], filepath)
@@ -97,32 +87,40 @@ def remove_files(path, files):
     for p in Path(path).glob(files):
         p.unlink()
 
-class Worker(object):
+# Tensorflow training function
+def train(dataset_path, training_steps):
+    bottleneck_dir = dataset_path + 'bottlenecks'
+    labels_path = dataset_path + "labels/"
+    output_graph = dataset_path + "retrained_graph.pb"
+    output_labels = dataset_path + "retrained_labels.txt"
 
-    def __init__(self, queue):
-        self.queue = queue
+    return retrain.run(bottleneck_dir=bottleneck_dir, 
+                how_many_training_steps=training_steps,
+                image_dir=labels_path, output_graph=output_graph,
+                output_labels=output_labels)
+
+class TrainWorker(object):
+
+    def __init__(self, dataset_path, training_steps):
+        self.dataset_path = dataset_path
+        self.training_steps = training_steps
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
         thread.start()
 
     def run(self):
-        while True:
-            try:
-                print("IM A WORKER")
-                # while True:
-                task = self.queue.get()
-                print("MY TASK: ", task)
-                if task['action'] == 'train':
-                    remove_files("/tmp/tfhub_modules/", "*.lock")
-                    dataset_path = task['dataset']['path']
-                    training_steps = int(task['training_steps'])
-                    train(dataset_path, training_steps)
-                    self.queue.task_done()
-                time.sleep(1)
-            except Exception as e:
-                print(e)
-                pass
+        print('WORKER LAUNCHED')
+        
+        try:
+            train(self.dataset_path, self.training_steps)
+            
+        except Exception as e:
+            print(e)
 
 def configure_app(app):
     app.config.debug = True
+    app.config.port = 8080
+    app.config.host = "0.0.0.0"
+    app.config.LOGO = None
+    

@@ -13,9 +13,6 @@
 # limitations under the License.
 # ==============================================================================
 
-import os
-import argparse
-
 import numpy as np
 import tensorflow as tf
 
@@ -39,8 +36,7 @@ def read_tensor_from_image_file(file_name,
                                 input_mean=0,
                                 input_std=255):
   input_name = "file_reader"
-  output_name = "normalized"
-  filebytes = open(file_name, 'rb')
+  # output_name = "normalized"
   file_reader = tf.read_file(file_name, input_name)
   if file_name.endswith(".png"):
     image_reader = tf.image.decode_png(

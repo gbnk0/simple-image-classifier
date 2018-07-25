@@ -44,7 +44,7 @@ class Datasets(object):
 
                 results.append(dataset)
         return results
-    
+
 
     def create(self, name):
         result = False
@@ -63,6 +63,7 @@ class Datasets(object):
     def add_file(self, request, dataset_name, label_name):
 
         result = False
+        request_json = {}
         label_dir = self.datasets_dir + \
             normalize_name(dataset_name) + '/' + 'labels/' + label_name
 
@@ -74,15 +75,15 @@ class Datasets(object):
         # if url passed to json body
         try:
             request_json = request.json
-        except:
-            request_json = {}
+        except Exception as e:
+            print(e)
 
         if 'url' in request_json.keys():
             save_from_url(request_json['url'], filepath)
             result = True
 
         # if file passed in body
-        else:      
+        else:
             save_from_bytes(request.body, filepath)
             result = True
         

@@ -78,7 +78,7 @@ def classify(dataset_path, request):
         print(e)
 
     if 'url' in request_json.keys():
-        save_from_url(request_json['url'], filepath)
+        save_from_urls([request_json['url']], filepath)
     # if file passed in body
     else:
         save_from_bytes(request.body, filepath)

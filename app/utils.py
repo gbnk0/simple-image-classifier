@@ -5,7 +5,8 @@ import requests
 import threading
 import filetype
 import retrain
-import label
+# import label
+from label import Classify
 from pathlib import Path
 
 def is_jpeg(file):
@@ -91,10 +92,11 @@ def classify(dataset_path, request):
     graph_path = dataset_path + "retrained_graph.pb"
     labels_path = dataset_path + "retrained_labels.txt"
 
-    labels = label.run(filename=filepath,
+    cl = Classify(graph=graph_path)
+    
+    labels = cl.run(filename=filepath,
                        output_layer="final_result",
                        input_layer="Placeholder",
-                       graph=graph_path,
                        labels=labels_path)
 
     remove_file(filepath)

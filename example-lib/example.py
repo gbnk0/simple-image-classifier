@@ -56,5 +56,8 @@ if __name__ == "__main__":
 
     print('Dataset is trained.')
 
-    print("Testing classifier with one picture: ")
+    print("Testing classifier with one dog picture: ")
     print(s.datasets.classify('animals', url="https://farm4.staticflickr.com/3380/3533802505_02f938ebd1_q_d.jpg"))
+
+    print("Testing classifier with one cat picture: ")
+    print(s.datasets.classify('animals', url="https://farm1.staticflickr.com/51/169329862_b3b297c7a9_q_d.jpg"))

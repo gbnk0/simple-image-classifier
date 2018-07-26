@@ -13,8 +13,6 @@ class SimpleClassifier(object):
         return SimpleClassifier.Datasets(self)
     
     def json_query(self, path, method, **kwargs):
-        result = {}
-        print(kwargs)
         r = requests.request(method, self.uri + path, json=kwargs)
         return r.json()
     
@@ -23,33 +21,38 @@ class SimpleClassifier(object):
         def __init__(self, classifier):
             self.classifier = classifier
         
-        def getAll(self):
-            result = self.classifier.json_query('/datasets', 'GET')
-            return result
-        
-        def get(self, dataset_name):
-            path = '/datasets/' + dataset_name
+        def get(self, dataset=None):
+            path = '/datasets'
+            if dataset:
+                path = path + '/' + dataset
             result = self.classifier.json_query(path, 'GET')
             return result
         
         def create(self, name):
             result = self.classifier.json_query('/datasets', 'PUT', name=name)
             return result
-        
-        def train(self, dataset_name, **kwargs):
-            path = '/datasets/' + dataset_name + '/train'
-            result = self.classifier.json_query(path, 'POST', **kwargs)
+
+        def addPicture(self, dataset, **kwargs):
+            result = {}
+            urls = kwargs.get('urls', [])
+            label = kwargs.get('label')
+
+            path = '/datasets/' + dataset + '/' + label
+
+            if not isinstance(urls, list):
+                if isinstance(urls, str):
+                    urls = [urls]
+
+            result = self.classifier.json_query(path, 'PUT', urls=urls)
+
             return result
 
-
-if __name__ == "__main__":
-    s = SimpleClassifier(host='localhost', port=8080, proto="http")
-    print("Classifier URI: ", s.uri)
-    print("Get all available datasets: ", s.datasets.getAll())
-    print("Create one dataset: ", s.datasets.create('animals'))
-    # Add pictures
-    print("Get one dataset: ", s.datasets.get('animals'))
-    print("Launching dataset training: ", s.datasets.train('animals', training_steps=50))
-
-
-
+        def train(self, dataset, **kwargs):
+            path = '/datasets/' + dataset + '/train'
+            result = self.classifier.json_query(path, 'POST', **kwargs)
+            return result
+        
+        def classify(self, dataset, **kwargs):
+            path = '/datasets/' + dataset + '/label'
+            result = self.classifier.json_query(path, 'POST', **kwargs)
+            return result

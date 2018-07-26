@@ -76,6 +76,7 @@ async def route_train_dataset(request, dataset_name):
     if dataset['trainable'] == True:
         TrainWorker(dataset['path'], training_steps)
         result = resp('success')
+        result['data'] = {}
         result['data']['task'] = train_task
     else:
         result['reason'] =  "This dataset is not trainable"

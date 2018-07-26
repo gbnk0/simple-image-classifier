@@ -30,12 +30,12 @@ def save_from_bytes(file_bytes, label_dir):
 
     return result
 
-def save_from_urls(urls, label_dir):
+def save_from_urls(urls, dest_dir):
     saved_files = []
 
     for url in urls:
         filename = make_uuid() + '.jpg'
-        filepath = label_dir + '/' + filename
+        filepath = dest_dir + '/' + filename
 
         with open(filepath, "wb") as f:
             
@@ -64,11 +64,12 @@ def normalize_name(s):
     s = re.sub(r"\s+", '_', s)
     return s
 
+def remove_file(filename):
+    if os.path.exists(filename):
+        os.remove(filename)
 
 def classify(dataset_path, request):
     request_json = {}
-    filename = make_uuid() + '.jpg'
-    filepath = dataset_path + '/' + filename
 
     # if url passed to json body
     try:
@@ -78,24 +79,27 @@ def classify(dataset_path, request):
         print(e)
 
     if 'url' in request_json.keys():
-        save_from_urls([request_json['url']], filepath)
+        url = request_json['url']
+        filepath = save_from_urls([url], dataset_path)
     # if file passed in body
     else:
-        save_from_bytes(request.body, filepath)
+        filepath = save_from_bytes(request.body, dataset_path)
+    
+    if len(filepath) > 0:
+        filepath = filepath[0]
 
     graph_path = dataset_path + "retrained_graph.pb"
     labels_path = dataset_path + "retrained_labels.txt"
+
     labels = label.run(filename=filepath,
                        output_layer="final_result",
                        input_layer="Placeholder",
                        graph=graph_path,
                        labels=labels_path)
 
-    return list(labels)
+    remove_file(filepath)
 
-def remove_files(path, files):
-    for p in Path(path).glob(files):
-        p.unlink()
+    return list(labels)
 
 # Tensorflow training function
 def train(dataset_path, training_steps):

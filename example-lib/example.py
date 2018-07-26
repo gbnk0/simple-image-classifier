@@ -28,20 +28,20 @@ if __name__ == "__main__":
         "https://farm1.staticflickr.com/471/18464362609_2b30e928a6_q_d.jpg"
     ]
 
-    # print("Add pictures to one dataset with the dogs label:")
+    print("Add pictures to one dataset with the dogs label:")
     
-    # print(s.datasets.addPicture(dataset='animals', label='dogs', urls=dogs_urls))
+    print(s.datasets.addPicture(dataset='animals', label='dogs', urls=dogs_urls))
     
-    # print(s.datasets.addPicture(dataset='animals', label='cats', urls=cats_urls))
+    print(s.datasets.addPicture(dataset='animals', label='cats', urls=cats_urls))
     
-    # print("Launching dataset training: ",
-    #       s.datasets.train('animals', training_steps=50))
+    print("Launching dataset training: ",
+          s.datasets.train('animals', training_steps=50))
 
-    # print(s.datasets.get('animals'))
+    print(s.datasets.get('animals'))
 
-    # while s.datasets.get('animals')['trained'] == False:
-    #     print('Waiting for dataset to be trained...')
-    #     sleep(2)
+    while s.datasets.get('animals')['trained'] == False:
+        print('Waiting for dataset to be trained...')
+        sleep(2)
 
     print('Dataset is trained.')
 

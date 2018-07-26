@@ -14,7 +14,6 @@ class SimpleClassifier(object):
     
     def json_query(self, path, method, **kwargs):
         r = requests.request(method, self.uri + path, json=kwargs)
-        print(r.text)
         return r.json()
     
     class Datasets(object):

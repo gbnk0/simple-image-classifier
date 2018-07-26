@@ -3,15 +3,15 @@ from classifier import SimpleClassifier
 
 if __name__ == "__main__":
     s = SimpleClassifier(host='localhost', port=8080, proto="http")
-    print("Classifier URI: ", s.uri)
+    print("Classifier URI: \n", s.uri)
     
-    print("Get all available datasets: ", s.datasets.get())
+    print("Get all available datasets: \n", s.datasets.get())
     
-    print("Get one  datasets: ", s.datasets.get(dataset='animals'))
+    print("Get one  datasets: \n", s.datasets.get(dataset='animals'))
     
-    print("Create one dataset: ", s.datasets.create('animals'))
+    print("Create one dataset: \n", s.datasets.create('animals'))
     # Add pictures
-    print("Get one dataset: ", s.datasets.get('animals'))
+    print("Get one dataset: \n", s.datasets.get('animals'))
 
     dogs_urls = [
         "https://farm4.staticflickr.com/3373/3600836516_ab924c6729_q_d.jpg",
@@ -39,14 +39,14 @@ if __name__ == "__main__":
         "https://farm5.staticflickr.com/4381/35543718933_23a68e2b6d_q_d.jpg"
     ]
 
-    print("Add pictures to one dataset with the dogs label:")
+    print("Add pictures to one dataset with the dogs label:\n")
     
     print(s.datasets.addPicture(dataset='animals', label='dogs', urls=dogs_urls))
     
     print(s.datasets.addPicture(dataset='animals', label='cats', urls=cats_urls))
     
-    print("Launching dataset training: ",
-          s.datasets.train('animals', training_steps=100))
+    print("Launching dataset training: \n",
+          s.datasets.train('animals', training_steps=50))
 
     print(s.datasets.get('animals'))
 
@@ -54,10 +54,13 @@ if __name__ == "__main__":
         print('Waiting for dataset to be trained...')
         sleep(2)
 
-    print('Dataset is trained.')
+    print('Dataset is trained.\n')
 
-    print("Testing classifier with one dog picture: ")
+    print("Testing classifier with one dog picture: \n")
     print(s.datasets.classify('animals', url="https://farm4.staticflickr.com/3380/3533802505_02f938ebd1_q_d.jpg"))
 
-    print("Testing classifier with one cat picture: ")
+    print("Testing classifier with one cat picture: \n")
     print(s.datasets.classify('animals', url="https://farm1.staticflickr.com/51/169329862_b3b297c7a9_q_d.jpg"))
+
+    print('Deleting the created dataset: \n')
+    print(s.datasets.delete('animals'))

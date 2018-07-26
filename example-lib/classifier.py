@@ -31,6 +31,11 @@ class SimpleClassifier(object):
         def create(self, name):
             result = self.classifier.json_query('/datasets', 'PUT', name=name)
             return result
+        
+        def delete(self, name):
+            path = '/datasets/' + name
+            result = self.classifier.json_query(path, 'DELETE')
+            return result
 
         def addPicture(self, dataset, **kwargs):
             result = {}

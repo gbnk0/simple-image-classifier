@@ -5,7 +5,6 @@ import requests
 import threading
 import filetype
 import retrain
-# import label
 from label import Classify
 from pathlib import Path
 
@@ -68,6 +67,9 @@ def normalize_name(s):
 def remove_file(filename):
     if os.path.exists(filename):
         os.remove(filename)
+
+def delete_dir(path) :
+    return os.rmdir(path)
 
 def classify(dataset_path, request):
     request_json = {}

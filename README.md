@@ -28,12 +28,19 @@ python3 app.py
 
 It will listen on localhost:8080
 
+#### EXAMPLES:
+```
+cd example-lib/
+edit the example.py file with your set of pictures
+python3 example.py
+```
+
 #### POPULATING DATASET
 
 When you successfully created a dataset using the /datasets endpoint:
 One method for populating the new dataset is to copy all your categories folders (dog, cat, fish, people) to the data/{datasetName}/labels/ folder.
 
 
-#### POSTMAN DOC:
+#### API DOCUMENTATION:
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://documenter.getpostman.com/view/3045659/RWMHM7ir)

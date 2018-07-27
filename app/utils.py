@@ -1,6 +1,7 @@
 import os
 import re
 import uuid
+import shutil
 import requests
 import threading
 import filetype
@@ -69,7 +70,7 @@ def remove_file(filename):
         os.remove(filename)
 
 def delete_dir(path) :
-    return os.rmdir(path)
+    return shutil.rmtree(path, ignore_errors=True)
 
 def classify(dataset, request):
     labels = []

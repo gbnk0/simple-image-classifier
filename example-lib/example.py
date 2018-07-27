@@ -41,9 +41,12 @@ if __name__ == "__main__":
 
     print("Add pictures to one dataset with the dogs label:\n")
     
-    print(s.datasets.addPicture(dataset='animals', label='dogs', urls=dogs_urls))
+    # Use of spaces for testing spaces in dataset names
+    for i in range(2):
+        print(s.datasets.addPicture(dataset='animals', label='beautiful dog', urls=dogs_urls))
     
-    print(s.datasets.addPicture(dataset='animals', label='cats', urls=cats_urls))
+        print(s.datasets.addPicture(dataset='animals',
+                                    label='beautiful cat', urls=cats_urls))
     
     print("Launching dataset training: \n",
           s.datasets.train('animals', training_steps=50))

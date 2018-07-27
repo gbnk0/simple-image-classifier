@@ -38,7 +38,7 @@ def is_trainable(labels):
     score = 0
     if len(labels) > 1:
         for label in labels:
-            if label['items'] >= 1:
+            if label['items'] >= 10:
                 score += 1
 
     if score > 1:

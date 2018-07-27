@@ -94,8 +94,12 @@ async def route_train_dataset(request, dataset_name):
 async def route_label_item(request, dataset_name):
     result = resp('success')
     dataset = datasets.get(name=dataset_name)
-    labels = classify(dataset['path'], request)
-    result['data'] = labels
+    labels = classify(dataset, request)
+    if len(labels) > 0:
+        result['data'] = labels
+    else:
+        result = resp('error')
+        result['reason'] = "Maybe you have to train this dataset first."
 
     return json(result, status=201)
 

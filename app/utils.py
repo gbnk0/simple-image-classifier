@@ -72,37 +72,39 @@ def delete_dir(path) :
     return os.rmdir(path)
 
 def classify(dataset, request):
+    labels = []
     dataset_path = dataset['path']
     request_json = {}
 
-    # if url passed to json body
-    try:
-        request_json = request.json
+    if dataset['trained'] == True:
+        # if url passed to json body
+        try:
+            request_json = request.json
 
-    except Exception as e:
-        print(e)
+        except Exception as e:
+            print(e)
 
-    if 'url' in request_json.keys():
-        url = request_json['url']
-        filepath = save_from_urls([url], dataset_path)
-    # if file passed in body
-    else:
-        filepath = save_from_bytes(request.body, dataset_path)
-    
-    if len(filepath) > 0:
-        filepath = filepath[0]
+        if 'url' in request_json.keys():
+            url = request_json['url']
+            filepath = save_from_urls([url], dataset_path)
+        # if file passed in body
+        else:
+            filepath = save_from_bytes(request.body, dataset_path)
+        
+        if len(filepath) > 0:
+            filepath = filepath[0]
 
-    graph_path = dataset_path + "retrained_graph.pb"
-    labels_path = dataset_path + "retrained_labels.txt"
+        graph_path = dataset_path + "retrained_graph.pb"
+        labels_path = dataset_path + "retrained_labels.txt"
 
-    cl = Classify(graph=graph_path)
-    
-    labels = cl.run(filename=filepath,
-                       output_layer="final_result",
-                       input_layer="Placeholder",
-                       labels=labels_path)
+        cl = Classify(graph=graph_path)
+        
+        labels = cl.run(filename=filepath,
+                        output_layer="final_result",
+                        input_layer="Placeholder",
+                        labels=labels_path)
 
-    remove_file(filepath)
+        remove_file(filepath)
 
     return list(labels)
 

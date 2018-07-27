@@ -21,6 +21,12 @@ async def route_get_datasets(request):
 async def route_get_one_dataset(request, dataset_name):
     return json(datasets.get(name=dataset_name), status=200)
 
+@app.route('/datasets/<dataset_name>', methods=['DELETE'])
+async def route_delete_one_dataset(request, dataset_name):
+    result = resp('success')
+    datasets.delete(dataset_name)
+    return json(result, status=200)
+
 @app.route('/datasets', methods=['PUT'])
 async def route_new_dataset(request):
     result = resp('error')

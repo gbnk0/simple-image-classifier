@@ -1,6 +1,6 @@
 import os
 import time
-from utils import make_dir, normalize_name, save_from_urls, save_from_bytes
+from utils import make_dir, normalize_name, save_from_urls, save_from_bytes, delete_dir
 
 def is_trained(dataset_path):
     result = False
@@ -12,7 +12,7 @@ def is_trained(dataset_path):
 def get_labels(dataset_path):
     labels = []
     labels_path = dataset_path + 'labels'
-    if os.path.isdir(dataset_path):
+    if os.path.isdir(labels_path):
         for label_name in os.listdir(labels_path):
             label_path = dataset_path + 'labels/' + label_name
 
@@ -92,6 +92,14 @@ class Datasets(object):
             result = True
 
         return result
+    
+    def delete(self, name):
+        name = normalize_name(name)
+        dataset_path = self.datasets_dir + name
+        delete_dir(dataset_path)
+        return
+
+
     
     def add_files(self, request, dataset_name, label_name):
 

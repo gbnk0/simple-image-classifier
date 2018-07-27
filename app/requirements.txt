@@ -1,4 +1,4 @@
-gunicorn==19.8.1
+gunicorn==19.9.0
 tensorflow>=1.9.0
 tensorflow_hub>=0.1.0
 sanic==0.7.0

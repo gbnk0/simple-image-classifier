@@ -71,7 +71,8 @@ def remove_file(filename):
 def delete_dir(path) :
     return os.rmdir(path)
 
-def classify(dataset_path, request):
+def classify(dataset, request):
+    dataset_path = dataset['path']
     request_json = {}
 
     # if url passed to json body

@@ -94,7 +94,7 @@ async def route_train_dataset(request, dataset_name):
 async def route_label_item(request, dataset_name):
     result = resp('success')
     dataset = datasets.get(name=dataset_name)
-    labels = classify(dataset['path'], request)
+    labels = classify(dataset, request)
     result['data'] = labels
 
     return json(result, status=201)

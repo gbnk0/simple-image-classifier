@@ -1,5 +1,6 @@
 import os
 import time
+from urllib.parse import unquote
 from utils import make_dir, normalize_name, save_from_urls, save_from_bytes, delete_dir
 
 def is_trained(dataset_path):
@@ -78,7 +79,6 @@ class Datasets(object):
 
         return results
 
-
     def create(self, name):
         result = False
 
@@ -98,8 +98,6 @@ class Datasets(object):
         dataset_path = self.datasets_dir + name
         delete_dir(dataset_path)
         return
-
-
     
     def add_files(self, request, dataset_name, label_name):
 
@@ -118,7 +116,9 @@ class Datasets(object):
 
         label_dir = self.datasets_dir + \
             normalize_name(dataset_name) + '/' + 'labels/' + label_name
-
+        # decode url format
+        label_dir = unquote(label_dir)
+        # make label dir if not exists
         make_dir(label_dir)
 
         new_files = []

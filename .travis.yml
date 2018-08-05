@@ -10,6 +10,9 @@ jobs:
         - docker tag $DOCKER_USER/simple-image-classifier $DOCKER_USER/simple-image-classifier:$TRAVIS_TAG
         - docker push $DOCKER_USER/simple-image-classifier:$TRAVIS_TAG
         - docker push $DOCKER_USER/simple-image-classifier:latest
+      on:
+        tags: true
+        
 branches:
   only:
     - master

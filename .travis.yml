@@ -12,7 +12,3 @@ jobs:
         - docker push $DOCKER_USER/simple-image-classifier:latest
       on:
         tags: true
-        
-branches:
-  only:
-    - master

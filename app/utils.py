@@ -24,30 +24,32 @@ def save_from_bytes(file_bytes, label_dir):
     filename = make_uuid() + '.jpg'
     filepath = label_dir + '/' + filename
 
-    if is_jpeg(file_bytes):
-        with open(filepath, 'wb') as file:
-            file.write(file_bytes)
-            result.append(filepath)
+    if save_file(file_bytes, filepath):
+        result.append(filepath)
 
     return result
 
 def save_from_urls(urls, dest_dir):
-    saved_files = []
+    result = []
 
     for url in urls:
         filename = make_uuid() + '.jpg'
         filepath = dest_dir + '/' + filename
+        response = requests.get(url)
+        file_bytes = response.content
 
-        with open(filepath, "wb") as f:
-            
-            response = requests.get(url)
-            file = response.content
+        if save_file(file_bytes, filepath):
+            result.append(filepath)
 
-            if is_jpeg(file):
-                f.write(file)
-                saved_files.append(filepath)
+    return result
 
-    return saved_files
+def save_file(file_bytes, filepath):
+    result = False
+    if is_jpeg(file_bytes):
+        with open(filepath, "wb") as file:
+            file.write(file_bytes)
+            result = True
+    return result
 
 def make_dir(directory):
     result = False

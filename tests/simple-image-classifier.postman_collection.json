@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "e5701ae2-ba83-4646-aaac-997216df4e29",
+		"name": "simple-image-classifier",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Creates a dataset",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "38887893-b35b-4bac-a1c2-af21e67cfa97",
+						"type": "text/javascript",
+						"exec": [
+							"var guid = (function() {",
+							"  function s4() {",
+							"    return Math.floor((1 + Math.random()) * 0x10000)",
+							"               .toString(16)",
+							"               .substring(1);",
+							"  }",
+							"  return function() {",
+							"    return s4() + s4() + '-' + s4() + s4() + s4();",
+							"  };",
+							"})();",
+							"",
+							"postman.setEnvironmentVariable(\"datasetName\", guid());",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7a2828d2-99e3-468f-838c-df9ab62f8b67",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"var datasetName = pm.environment.get(\"datasetName\");",
+							"pm.test(\"Status is success\", function () {",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"    pm.expect(jsonData.status).to.eql(\"created\");",
+							"});",
+							"",
+							"pm.test(\"Check if data is returned\", function () {",
+							"    pm.expect(jsonData).to.have.property('data');",
+							"    pm.expect(jsonData.data).to.have.property('name');",
+							"});",
+							"pm.test(\"Check if dataset name is returned\", function () {",
+							"    pm.expect(jsonData.data.name).to.eql(datasetName);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"{{datasetName}}\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/datasets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"datasets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload multiple images URL to dataset",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c3eddd85-9708-446d-9e9a-340c1cb4e8d0",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "70aa3b8b-4ad5-4d07-80aa-7ea7bae9e562",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Status is success\", function () {",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"    pm.expect(jsonData.status).to.eql(\"created\");",
+							"});",
+							"",
+							"pm.test(\"Check if data is returned\", function () {",
+							"    pm.expect(jsonData).to.have.property('data');",
+							"    pm.expect(jsonData.data).to.have.property('new_files');",
+							"});",
+							"",
+							"",
+							"tests[\"Check if new_files length is > 1\"] = jsonData.data.new_files.length >= 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"urls\": [\n\t  \"https://www.wanimo.com/veterinaire/images/articles/chien/chiot-prenom.jpg\",\n\t  \"https://i.pinimg.com/736x/bb/16/5c/bb165c8fcecf107962691450d7505dd3--world-cutest-dog-cutest-dogs.jpg\"\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/datasets/{{datasetName}}/dog",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"datasets",
+						"{{datasetName}}",
+						"dog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all datasets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"TEST4\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/datasets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"datasets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get one dataset",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"TEST4\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/datasets/{{datasetName}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"datasets",
+						"{{datasetName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Launch dataset training task",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c3eddd85-9708-446d-9e9a-340c1cb4e8d0",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"training_steps\": 50\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/datasets/{{datasetName}}/train",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"datasets",
+						"{{datasetName}}",
+						"train"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Classify a picture",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c3eddd85-9708-446d-9e9a-340c1cb4e8d0",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"url\": \"https://imgc.allpostersimages.com/img/print/affiches/walt-disney-mickey-mouse-classic_a-G-9067566-0.jpg\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/datasets/{{datasetName}}/label",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"datasets",
+						"{{datasetName}}",
+						"label"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete one dataset",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/datasets/{{datasetName}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"datasets",
+						"{{datasetName}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

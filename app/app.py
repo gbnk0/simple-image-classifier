@@ -2,7 +2,7 @@ from sanic import Sanic
 from sanic.response import json
 from responses import resp
 from datasets import Datasets
-from utils import TrainWorker, classify, configure_app
+from utils import TrainWorker, classify, configure_app, get_version
 
 app = Sanic()
 configure_app(app)
@@ -103,6 +103,14 @@ async def route_label_item(request, dataset_name):
 
     return json(result, status=201)
 
+@app.route('/version')
+async def route_get_version(request):
+    version = get_version()
+    result = {
+        "version": version
+    }
+    return json(result, status=200)
+    
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
 

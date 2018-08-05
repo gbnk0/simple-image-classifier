@@ -2,12 +2,13 @@ jobs:
   include:
     - stage: build-image
       script:
+        - echo $TRAVIS_TAG > app/version.txt
         - docker build --build-arg VCS_REF=`git rev-parse --short HEAD` -t $DOCKER_USER/simple-image-classifier .
 
       after_success:
         - docker login -u $DOCKER_USER -p $DOCKER_PASS
-        - docker tag $DOCKER_USER/simple-image-classifier $DOCKER_USER/simple-image-classifier:$TRAVIS_BUILD_NUMBER
-        - docker push $DOCKER_USER/simple-image-classifier:$TRAVIS_BUILD_NUMBER
+        - docker tag $DOCKER_USER/simple-image-classifier $DOCKER_USER/simple-image-classifier:$TRAVIS_TAG
+        - docker push $DOCKER_USER/simple-image-classifier:$TRAVIS_TAG
         - docker push $DOCKER_USER/simple-image-classifier:latest
 branches:
   only:

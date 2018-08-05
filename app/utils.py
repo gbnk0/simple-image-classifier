@@ -144,3 +144,10 @@ def configure_app(app):
     app.config.host = "0.0.0.0"
     app.config.LOGO = None
     
+def get_version():
+    version = "unknown"
+    version_file = 'version.txt'
+    if os.path.isfile(version_file):
+        with open(version_file, 'r') as f:
+            version = f.read().strip()
+    return version

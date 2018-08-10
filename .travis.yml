@@ -10,6 +10,7 @@ jobs:
         - docker tag $DOCKER_USER/simple-image-classifier $DOCKER_USER/simple-image-classifier:$TRAVIS_BUILD_NUMBER
         - docker push $DOCKER_USER/simple-image-classifier:$TRAVIS_BUILD_NUMBER
         - docker push $DOCKER_USER/simple-image-classifier:latest
+        - curl -XPOST https://hooks.microbadger.com/images/gbnk0/simple-image-classifier/_WZPSkqhhy137pspxCtRGxofefI=
 branches:
   only:
     - master

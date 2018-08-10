@@ -2,7 +2,7 @@ jobs:
   include:
     - stage: build-image
       script:
-        - echo $TRAVIS_TAG > app/version.txt
+        - echo $TRAVIS_BUILD_NUMBER > app/version.txt
         - docker build --build-arg VCS_REF=`git rev-parse --short HEAD` -t $DOCKER_USER/simple-image-classifier .
 
       after_success:

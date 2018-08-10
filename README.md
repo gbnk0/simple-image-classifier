@@ -3,6 +3,9 @@ Simple image classifier microservice using tensorflow
 
 ![pipeline status](https://travis-ci.org/gbnk0/simple-image-classifier.svg?branch=master)
 ![dockerbuild](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)
+[![](https://images.microbadger.com/badges/image/gbnk0/simple-image-classifier.svg)](https://microbadger.com/images/gbnk0/simple-image-classifier)
+[![](https://images.microbadger.com/badges/version/gbnk0/simple-image-classifier.svg)](https://microbadger.com/images/gbnk0/simple-image-classifier)
+[![](https://images.microbadger.com/badges/commit/gbnk0/simple-image-classifier.svg)](https://microbadger.com/images/gbnk0/simple-image-classifier)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2541d5b6ddaa48c8a5d834ea03649372)](https://www.codacy.com/app/gbnk0/simple-image-classifier?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=gbnk0/simple-image-classifier&amp;utm_campaign=Badge_Grade)
 ![python_version](https://img.shields.io/badge/python-3.5%2C3.6-blue.svg)
 

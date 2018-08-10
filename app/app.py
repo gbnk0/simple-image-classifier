@@ -58,8 +58,8 @@ async def route_new_file(request, dataset_name, label_name):
         result = json(result_data, status=201)
     else:
         result_data = resp('error')
-        result_data['reason'] = "Maybe you forgot to specify some files to upload"
-        result = json(result_data, status=422)
+        result_data['reason'] = "Maybe you forgot to specify some files to upload, or the files are already present in the label"
+        result = json(result_data, status=200)
 
     return result
 

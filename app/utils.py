@@ -8,6 +8,7 @@ import filetype
 import retrain
 from label import Classify
 from pathlib import Path
+import hashlib
 
 def is_jpeg(file):
     result = False
@@ -18,38 +19,47 @@ def is_jpeg(file):
 
     return result
 
-def save_from_bytes(file_bytes, label_dir):
+def save_from_bytes(file_bytes, label_dir, hashs):
     result = []
+    new_hashs = []
 
     filename = make_uuid() + '.jpg'
     filepath = label_dir + '/' + filename
 
-    if save_file(file_bytes, filepath):
-        result.append(filepath)
+    saved_file, new_hash = save_file(file_bytes, filepath, hashs)
+    if saved_file:
+        result.append(saved_file)
+        new_hashs.append(new_hash)
 
-    return result
+    return result, new_hashs
 
-def save_from_urls(urls, dest_dir):
+def save_from_urls(urls, dest_dir, hashs):
     result = []
-
+    new_hashs = []
     for url in urls:
         filename = make_uuid() + '.jpg'
         filepath = dest_dir + '/' + filename
         response = requests.get(url)
         file_bytes = response.content
 
-        if save_file(file_bytes, filepath):
-            result.append(filepath)
+        saved_file, new_hash = save_file(file_bytes, filepath, hashs)
+        if saved_file:
+            result.append(saved_file)
+            new_hashs.append(new_hash)
 
-    return result
 
-def save_file(file_bytes, filepath):
-    result = False
-    if is_jpeg(file_bytes):
-        with open(filepath, "wb") as file:
-            file.write(file_bytes)
-            result = True
-    return result
+    return result, new_hashs
+
+def save_file(file_bytes, filepath, hashs=[]):
+    result = []
+    img_hash = hashlib.md5(file_bytes).hexdigest()
+    if not img_hash in hashs:
+        if is_jpeg(file_bytes):
+            with open(filepath, "wb") as file:
+                file.write(file_bytes)
+                result.append(filepath)
+
+    return result, img_hash
 
 def make_dir(directory):
     result = False
@@ -89,10 +99,10 @@ def classify(dataset, request):
 
         if 'url' in request_json.keys():
             url = request_json['url']
-            filepath = save_from_urls([url], dataset_path)
+            filepath, _ = save_from_urls([url], dataset_path, [])
         # if file passed in body
         else:
-            filepath = save_from_bytes(request.body, dataset_path)
+            filepath, _ = save_from_bytes(request.body, dataset_path, [])
         
         if len(filepath) > 0:
             filepath = filepath[0]

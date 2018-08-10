@@ -1,5 +1,6 @@
 import os
 import time
+import json
 from urllib.parse import unquote
 from utils import make_dir, normalize_name, save_from_urls, save_from_bytes, delete_dir
 
@@ -46,6 +47,29 @@ def is_trainable(labels):
         result = True
     
     return result
+
+def get_hashs(label_dir):
+    hashs = []
+    hashs_file = label_dir + '/' + 'hashs.json'
+    if os.path.isfile(hashs_file):
+        with open(hashs_file, 'r') as f:
+            hashs = json.load(f)["hashs"]
+    else:
+        with open(hashs_file, 'w') as f:
+            f.write(json.dumps({"hashs":[]}))
+    return hashs
+
+def update_hashs(label_dir, old_hashs, new_hashs):
+    hashs = []
+    hashs_file = label_dir + '/' + 'hashs.json'
+
+    updated_hashs = list(old_hashs)
+    updated_hashs.extend(h for h in new_hashs if h not in old_hashs)
+
+    with open(hashs_file, 'w') as f:
+        f.write(json.dumps({"hashs":updated_hashs}))
+
+    return True
 
 class Datasets(object):
 
@@ -122,12 +146,18 @@ class Datasets(object):
         make_dir(label_dir)
 
         new_files = []
+        new_hashs = []
+        hashs = get_hashs(label_dir)
+
         if 'urls' in request_json.keys():
-            new_files = save_from_urls(request_json['urls'], label_dir)
+            new_files, new_hashs = save_from_urls(request_json['urls'], label_dir, hashs)
         # if file passed in body
         else:
             if len(request.body) > 32:
-                new_files = save_from_bytes(request.body, label_dir)
+                new_files, new_hashs = save_from_bytes(request.body, label_dir, hashs)
+
+        update_hashs(label_dir, hashs, new_hashs)
+
         
         result['new_files'] = new_files
 

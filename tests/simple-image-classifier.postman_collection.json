@@ -131,7 +131,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"urls\": [\n\t  \"https://www.wanimo.com/veterinaire/images/articles/chien/chiot-prenom.jpg\",\n\t  \"https://i.pinimg.com/736x/bb/16/5c/bb165c8fcecf107962691450d7505dd3--world-cutest-dog-cutest-dogs.jpg\"\n  ]\n}"
+					"raw": "{\n  \"urls\": [\n    \"https://www.wanimo.com/veterinaire/images/articles/chien/chiot-prenom.jpg\",\n    \"https://i.pinimg.com/736x/bb/16/5c/bb165c8fcecf107962691450d7505dd3--world-cutest-dog-cutest-dogs.jpg\"\n  ]\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/datasets/{{datasetName}}/dog",
@@ -215,7 +215,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"training_steps\": 50\n}"
+					"raw": "{\n  \"training_steps\": 50\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/datasets/{{datasetName}}/train",
@@ -272,6 +272,30 @@
 		},
 		{
 			"name": "Delete one dataset",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/datasets/{{datasetName}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"datasets",
+						"{{datasetName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete one dataset Copy",
 			"request": {
 				"method": "DELETE",
 				"header": [],

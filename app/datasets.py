@@ -48,9 +48,10 @@ def is_trainable(labels):
     
     return result
 
-def get_hashs(label_dir):
+def get_hashs(dataset_dir, label_name):
     hashs = []
-    hashs_file = label_dir + '/' + 'hashs.json'
+    hashs_file = dataset_dir + '/' + label_name + '.json'
+
     if os.path.isfile(hashs_file):
         with open(hashs_file, 'r') as f:
             hashs = json.load(f)["hashs"]
@@ -59,15 +60,17 @@ def get_hashs(label_dir):
             f.write(json.dumps({"hashs":[]}))
     return hashs
 
-def update_hashs(label_dir, old_hashs, new_hashs):
+
+def update_hashs(dataset_dir, label_name, old_hashs, new_hashs):
     hashs = []
-    hashs_file = label_dir + '/' + 'hashs.json'
+    hashs_file = dataset_dir + '/' + label_name + '.json'
 
-    updated_hashs = list(old_hashs)
-    updated_hashs.extend(h for h in new_hashs if h not in old_hashs)
+    if len(new_hashs) > 0:
+        updated_hashs = list(old_hashs)
+        updated_hashs.extend(h for h in new_hashs if h not in old_hashs)
 
-    with open(hashs_file, 'w') as f:
-        f.write(json.dumps({"hashs":updated_hashs}))
+        with open(hashs_file, 'w') as f:
+            f.write(json.dumps({"hashs":updated_hashs}))
 
     return True
 
@@ -138,8 +141,8 @@ class Datasets(object):
         except Exception as e:
             print(e)
 
-        label_dir = self.datasets_dir + \
-            normalize_name(dataset_name) + '/' + 'labels/' + label_name
+        dataset_path = self.datasets_dir + normalize_name(dataset_name)
+        label_dir = dataset_path + '/' + 'labels/' + label_name
         # decode url format
         label_dir = unquote(label_dir)
         # make label dir if not exists
@@ -147,7 +150,7 @@ class Datasets(object):
 
         new_files = []
         new_hashs = []
-        hashs = get_hashs(label_dir)
+        hashs = get_hashs(dataset_path, label_name)
 
         if 'urls' in request_json.keys():
             new_files, new_hashs = save_from_urls(request_json['urls'], label_dir, hashs)
@@ -156,7 +159,7 @@ class Datasets(object):
             if len(request.body) > 32:
                 new_files, new_hashs = save_from_bytes(request.body, label_dir, hashs)
 
-        update_hashs(label_dir, hashs, new_hashs)
+        update_hashs(dataset_path, label_name, hashs, new_hashs)
 
         
         result['new_files'] = new_files

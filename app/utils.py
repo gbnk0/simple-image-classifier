@@ -58,6 +58,8 @@ def save_file(file_bytes, filepath, hashs=[]):
             with open(filepath, "wb") as file:
                 file.write(file_bytes)
                 result.append(filepath)
+    else:
+        print('Image hash already exists in database.')
 
     return result, img_hash
 

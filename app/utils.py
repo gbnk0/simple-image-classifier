@@ -113,7 +113,7 @@ def classify(dataset, request):
         labels_path = dataset_path + "retrained_labels.txt"
 
         cl = Classify(graph=graph_path)
-        
+        print(labels_path)
         labels = cl.run(filename=filepath,
                         output_layer="final_result",
                         input_layer="Placeholder",

@@ -27,7 +27,7 @@ def save_from_bytes(file_bytes, label_dir, hashs):
     filepath = label_dir + '/' + filename
 
     saved_file, new_hash = save_file(file_bytes, filepath, hashs)
-    if saved_file:
+    if len(saved_file) > 0:
         result.append(saved_file)
         new_hashs.append(new_hash)
 
@@ -43,7 +43,7 @@ def save_from_urls(urls, dest_dir, hashs):
         file_bytes = response.content
 
         saved_file, new_hash = save_file(file_bytes, filepath, hashs)
-        if saved_file:
+        if len(saved_file) > 0:
             result.append(saved_file)
             new_hashs.append(new_hash)
 
@@ -51,13 +51,13 @@ def save_from_urls(urls, dest_dir, hashs):
     return result, new_hashs
 
 def save_file(file_bytes, filepath, hashs=[]):
-    result = []
+    result = ""
     img_hash = hashlib.md5(file_bytes).hexdigest()
     if not img_hash in hashs:
         if is_jpeg(file_bytes):
             with open(filepath, "wb") as file:
                 file.write(file_bytes)
-                result.append(filepath)
+                result = filepath
     else:
         print('Image hash already exists in database.')
 

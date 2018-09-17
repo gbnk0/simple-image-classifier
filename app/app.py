@@ -103,8 +103,9 @@ async def route_get_version(request):
         "version": version
     }
     return json(result, status=200)
-    
+
+load_dataset_graphs()
+
 if __name__ == '__main__':
-    load_dataset_graphs()
     app.run(host='0.0.0.0', port=8080, debug=True)
 

@@ -1,7 +1,7 @@
 from sanic import Sanic
 from sanic.response import json
 from responses import resp
-from config import datasets, configure_app, datasets_bundle
+from config import datasets, configure_app, datasets_bundle, load_dataset_graphs
 from utils import TrainWorker, classify, get_version
 
 app = Sanic()
@@ -105,5 +105,6 @@ async def route_get_version(request):
     return json(result, status=200)
     
 if __name__ == '__main__':
+    load_dataset_graphs()
     app.run(host='0.0.0.0', port=8080, debug=True)
 

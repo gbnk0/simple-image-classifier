@@ -1,7 +1,7 @@
 from sanic import Sanic
 from sanic.response import json
 from responses import resp
-from config import datasets, configure_app
+from config import datasets, configure_app, datasets_bundle
 from utils import TrainWorker, classify, get_version
 
 app = Sanic()
@@ -87,7 +87,7 @@ async def route_train_dataset(request, dataset_name):
 async def route_label_item(request, dataset_name):
     result = resp('success')
     dataset = datasets.get(name=dataset_name)
-    labels = classify(dataset, request)
+    labels = classify(dataset, datasets_bundle, request)
     if len(labels) > 0:
         result['data'] = labels
     else:

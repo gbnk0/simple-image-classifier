@@ -89,6 +89,7 @@ def delete_dir(path) :
 def classify(dataset, bundle, request):
     labels = []
     dataset_path = dataset['path']
+    dataset_name = dataset['name']
     request_json = {}
 
     if dataset['trained'] == True:
@@ -111,7 +112,7 @@ def classify(dataset, bundle, request):
 
         labels_path = dataset_path + "retrained_labels.txt"
 
-        cl = bundle[dataset['name']]
+        cl = bundle[dataset_name]
         labels = cl.run(filename=filepath,
                         output_layer="final_result",
                         input_layer="Placeholder",

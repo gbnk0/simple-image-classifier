@@ -86,7 +86,7 @@ def remove_file(filename):
 def delete_dir(path) :
     return shutil.rmtree(path, ignore_errors=True)
 
-def classify(dataset, request):
+def classify(dataset, bundle, request):
     labels = []
     dataset_path = dataset['path']
     request_json = {}
@@ -109,11 +109,9 @@ def classify(dataset, request):
         if len(filepath) > 0:
             filepath = filepath[0]
 
-        graph_path = dataset_path + "retrained_graph.pb"
         labels_path = dataset_path + "retrained_labels.txt"
 
-        cl = Classify(graph=graph_path)
-        print(labels_path)
+        cl = bundle[dataset['name']]
         labels = cl.run(filename=filepath,
                         output_layer="final_result",
                         input_layer="Placeholder",
@@ -149,12 +147,6 @@ class TrainWorker(object):
         results = train(self.dataset_path, self.training_steps)
         return results
 
-
-def configure_app(app):
-    app.config.debug = True
-    app.config.port = 8080
-    app.config.host = "0.0.0.0"
-    app.config.LOGO = None
     
 def get_version():
     version = "unknown"

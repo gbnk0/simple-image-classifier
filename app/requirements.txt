@@ -1,7 +1,7 @@
 gunicorn==19.9.0
 tensorflow>=1.9.0
 tensorflow_hub>=0.1.0
-sanic==0.8.1
+sanic==0.8.3
 requests==2.18.4
 numpy==1.14.5
 filetype==1.0.1

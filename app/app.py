@@ -1,21 +1,15 @@
 from sanic import Sanic
 from sanic.response import json
 from responses import resp
-from datasets import Datasets
-from utils import TrainWorker, classify, configure_app, get_version
+from config import datasets, configure_app, datasets_bundle
+from utils import TrainWorker, classify, get_version
 
 app = Sanic()
 configure_app(app)
 
-data_dir = 'data/'
-datasets_dir = data_dir + 'datasets/'
-
-datasets = Datasets(datasets_dir)
-
 @app.route('/datasets', methods=['GET'])
 async def route_get_datasets(request):
     return json(datasets.get(), status=200)
-
 
 @app.route('/datasets/<dataset_name>', methods=['GET'])
 async def route_get_one_dataset(request, dataset_name):
@@ -44,7 +38,6 @@ async def route_new_dataset(request):
             result = resp('conflict')
         
     return json(result, status=201)
-
 
 @app.route('/datasets/<dataset_name>/<label_name>', methods=['PUT'])
 async def route_new_file(request, dataset_name, label_name):
@@ -94,7 +87,7 @@ async def route_train_dataset(request, dataset_name):
 async def route_label_item(request, dataset_name):
     result = resp('success')
     dataset = datasets.get(name=dataset_name)
-    labels = classify(dataset, request)
+    labels = classify(dataset, datasets_bundle, request)
     if len(labels) > 0:
         result['data'] = labels
     else:

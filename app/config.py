@@ -12,11 +12,16 @@ def configure_app(app):
     app.config.host = "0.0.0.0"
     app.config.LOGO = None
 
+global datasets_bundle
 datasets_bundle = {}
 
-for dataset in datasets.get():
-    dataset_name = dataset['name']
-    dataset_path = dataset['path']
+def load_dataset_graphs():
+    for dataset in datasets.get():
+        dataset_name = dataset['name']
+        dataset_path = dataset['path']
 
-    graph_path = dataset_path + "retrained_graph.pb"
-    datasets_bundle[dataset_name] = Classify(graph=graph_path)
+        graph_path = dataset_path + "retrained_graph.pb"
+        datasets_bundle[dataset_name] = Classify(graph=graph_path)
+    print("-> Loaded {} datasets.".format(len(datasets_bundle)))
+
+

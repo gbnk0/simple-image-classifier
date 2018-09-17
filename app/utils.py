@@ -149,12 +149,6 @@ class TrainWorker(object):
         results = train(self.dataset_path, self.training_steps)
         return results
 
-
-def configure_app(app):
-    app.config.debug = True
-    app.config.port = 8080
-    app.config.host = "0.0.0.0"
-    app.config.LOGO = None
     
 def get_version():
     version = "unknown"

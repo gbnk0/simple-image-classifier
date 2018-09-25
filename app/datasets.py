@@ -62,7 +62,6 @@ def get_hashs(dataset_dir, label_name):
 
 
 def update_hashs(dataset_dir, label_name, old_hashs, new_hashs):
-    hashs = []
     hashs_file = dataset_dir + '/' + label_name + '.json'
 
     if len(new_hashs) > 0:

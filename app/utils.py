@@ -2,13 +2,14 @@ import os
 import re
 import uuid
 import shutil
-import requests
-import threading
-import filetype
 import retrain
-from label import Classify
-from pathlib import Path
 import hashlib
+import requests
+import filetype
+import threading
+from pathlib import Path
+from label import Classify
+from datetime import datetime
 
 def is_jpeg(file):
     result = False
@@ -122,6 +123,17 @@ def classify(dataset, bundle, request):
 
     return list(labels)
 
+def update_trained_date(dataset_path):
+    result = False
+    graph_file = dataset_path + 'retrained_graph.pb'
+
+    if os.path.isfile(graph_file):
+        time_now = datetime.utcfromtimestamp(0)
+        os.utime(graph_file, (time_now, time_now))
+        result = True
+
+    return result
+
 # Tensorflow training function
 def train(dataset_path, training_steps):
     bottleneck_dir = dataset_path + 'bottlenecks'
@@ -146,6 +158,8 @@ class TrainWorker(object):
 
     def run(self):        
         results = train(self.dataset_path, self.training_steps)
+        if results:
+            update_trained_date(self.dataset_path)
         return results
 
     
@@ -156,3 +170,4 @@ def get_version():
         with open(version_file, 'r') as f:
             version = f.read().strip()
     return version
+

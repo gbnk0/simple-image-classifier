@@ -10,6 +10,7 @@ import threading
 from pathlib import Path
 from label import Classify
 from datetime import datetime
+import config
 
 def is_jpeg(file):
     result = False
@@ -162,6 +163,7 @@ class TrainWorker(object):
         results = train(self.dataset_path, self.training_steps)
         if results:
             update_trained_date(self.dataset_path)
+        config.load_dataset_graphs()
         return results
 
     

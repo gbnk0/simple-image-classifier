@@ -13,10 +13,13 @@ from datetime import datetime
 
 def is_jpeg(file):
     result = False
-    file_type = filetype.guess(file).mime.lower().split('/')[1]
+    try:
+        file_type = filetype.guess(file).mime.lower().split('/')[1]
 
-    if file_type in ['jpg', 'jpeg']:
-        result = True
+        if file_type in ['jpg', 'jpeg']:
+            result = True
+    except:
+        pass
 
     return result
 

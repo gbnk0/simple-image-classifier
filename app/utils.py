@@ -54,11 +54,10 @@ def save_from_urls(urls, dest_dir, hashs):
 def save_file(file_bytes, filepath, hashs=[]):
     result = ""
     img_hash = hashlib.md5(file_bytes).hexdigest()
-    if not img_hash in hashs:
-        if is_jpeg(file_bytes):
-            with open(filepath, "wb") as file:
-                file.write(file_bytes)
-                result = filepath
+    if not img_hash in hashs and is_jpeg(file_bytes):
+        with open(filepath, "wb") as file:
+            file.write(file_bytes)
+            result = filepath
     else:
         print('Image hash already exists in database.')
 

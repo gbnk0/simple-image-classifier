@@ -56,7 +56,6 @@ async def route_new_file(request, dataset_name, label_name):
 
     return result
 
-
 @app.route('/datasets/<dataset_name>/train', methods=['POST'])
 async def route_train_dataset(request, dataset_name):
     result = resp('error')
@@ -81,7 +80,6 @@ async def route_train_dataset(request, dataset_name):
         result['reason'] =  "This dataset is not trainable"
 
     return json(result, status=200)
-
 
 @app.route('/datasets/<dataset_name>/label', methods=['POST'])
 async def route_label_item(request, dataset_name):

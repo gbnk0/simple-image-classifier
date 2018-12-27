@@ -1,3 +1,5 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 from sanic import Sanic
 from sanic.response import json
 from responses import resp

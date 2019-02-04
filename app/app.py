@@ -88,6 +88,7 @@ async def route_label_item(request, dataset_name):
     result = resp('success')
     dataset = datasets.get(name=dataset_name)
     labels = classify(dataset, datasets_bundle, request)
+
     if len(labels) > 0:
         result['data'] = labels
     else:

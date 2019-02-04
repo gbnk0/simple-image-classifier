@@ -21,7 +21,12 @@ def load_dataset_graphs():
         dataset_path = dataset['path']
 
         graph_path = dataset_path + "retrained_graph.pb"
-        datasets_bundle[dataset_name] = Classify(graph=graph_path)
+        datasets_bundle[dataset_name] = []
+        try:
+            datasets_bundle[dataset_name] = Classify(graph=graph_path)
+        except Exception as e:
+            print(e)
+            pass
     print("-> Loaded {} datasets.".format(len(datasets_bundle)))
 
 
